@@ -17,15 +17,15 @@ var response struct {
 }
 
 func TestConnectionApi(t *testing.T) {
-	expectedStatus := http.StatusOK
+	expectedStatusCode := http.StatusOK
 	expectedMessage := "Connection Successful"
 
 	resp, err := http.Get(endpoint)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if resp.StatusCode != expectedStatus {
-		t.Fatalf("Expected status code 200, got %v", resp.StatusCode)
+	if resp.StatusCode != expectedStatusCode {
+		t.Fatalf("Expected status code %v, got %v", expectedStatusCode, resp.StatusCode)
 	}
 	responseData, _ := ioutil.ReadAll(resp.Body)
 
