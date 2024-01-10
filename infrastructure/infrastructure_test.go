@@ -1,57 +1,56 @@
-package model
+package infrastructure
 
 import (
 	"testing"
+
+	"user-register-api/config"
+	"user-register-api/domain"
+	"user-register-api/infrastructure/persistence"
 )
 
-var testUser = User{
+var testUser = domain.User{
 	UserID:   "testuser_db",
 	Username: "testuser_db",
 	Password: "test_password",
 }
 
-func TestConnectionDB(t *testing.T) {
-	db, err := ConnectDB()
-	if err != nil {
-		t.Fatalf("Error connecting to the database: %v", err)
-	}
-	defer db.Close()
-}
-
 func TestInsertUser(t *testing.T) {
-	db, err := ConnectDB()
+	db, err := config.ConnectDB()
 	if err != nil {
 		t.Error(err)
 	}
 	defer db.Close()
+	userPersistence := persistence.NewUserPersistence()
 
-	err = InsertUser(db, testUser)
+	err = userPersistence.InsertUser(db, testUser.UserID, testUser.Username, testUser.Password)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
 func TestInsertUserDuplicate(t *testing.T) {
-	db, err := ConnectDB()
+	db, err := config.ConnectDB()
 	if err != nil {
 		t.Error(err)
 	}
 	defer db.Close()
+	userPersistence := persistence.NewUserPersistence()
 
-	err = InsertUser(db, testUser)
+	err = userPersistence.InsertUser(db, testUser.UserID, testUser.Username, testUser.Password)
 	if err == nil {
 		t.Error("Expected error, got nil")
 	}
 }
 
 func TestFindUserByUserID(t *testing.T) {
-	db, err := ConnectDB()
+	db, err := config.ConnectDB()
 	if err != nil {
 		t.Error(err)
 	}
 	defer db.Close()
+	userPersistence := persistence.NewUserPersistence()
 
-	user, err := findUserByUserID(db, testUser.UserID)
+	user, err := userPersistence.FindUserByUserID(db, testUser.UserID)
 	if err != nil {
 		t.Error(err)
 	}
@@ -67,19 +66,20 @@ func TestFindUserByUserID(t *testing.T) {
 }
 
 func TestUpdateUsername(t *testing.T) {
-	db, err := ConnectDB()
+	db, err := config.ConnectDB()
 	if err != nil {
 		t.Error(err)
 	}
 	defer db.Close()
+	userPersistence := persistence.NewUserPersistence()
 
 	updatedName := "testuser_db_updated"
-	err = UpdateUsername(db, testUser.UserID, updatedName)
+	err = userPersistence.UpdateUsername(db, testUser.UserID, updatedName)
 	if err != nil {
 		t.Error(err)
 	}
 
-	user, err := findUserByUserID(db, testUser.UserID)
+	user, err := userPersistence.FindUserByUserID(db, testUser.UserID)
 	if err != nil {
 		t.Error(err)
 	}
@@ -89,13 +89,14 @@ func TestUpdateUsername(t *testing.T) {
 }
 
 func TestDeleteUser(t *testing.T) {
-	db, err := ConnectDB()
+	db, err := config.ConnectDB()
 	if err != nil {
 		t.Error(err)
 	}
 	defer db.Close()
+	userPersistence := persistence.NewUserPersistence()
 
-	err = DeleteUser(db, testUser.UserID)
+	err = userPersistence.DeleteUser(db, testUser.UserID)
 	if err != nil {
 		t.Error(err)
 	}

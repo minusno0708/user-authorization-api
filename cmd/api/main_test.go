@@ -7,14 +7,14 @@ import (
 	"encoding/json"
 	"testing"
 
-	"user-register-api/model"
+	"user-register-api/domain"
 )
 
 const endpoint = "http://localhost:8080"
 
 var response struct {
 	Message string `json:"message"`
-	User model.User `json:"user"`
+	User domain.User `json:"user"`
 }
 
 func TestConnectionApi(t *testing.T) {
@@ -71,7 +71,7 @@ func TestSigninBodyNotExist(t *testing.T) {
 func TestSigninUserIDNotExist(t *testing.T) {
 	expectedMessage := "Body is not valid"
 
-	requestBody := &model.User{
+	requestBody := &domain.User{
 		Username: "testuser",
 		Password: "testpass",
 	}
@@ -113,7 +113,7 @@ func TestSigninUserIDNotExist(t *testing.T) {
 func TestSigninPasswordNotExist(t *testing.T) {
 	expectedMessage := "Body is not valid"
 
-	requestBody := &model.User{
+	requestBody := &domain.User{
 		UserID: "testuser",
 		Username: "testuser",
 	}
@@ -155,7 +155,7 @@ func TestSigninPasswordNotExist(t *testing.T) {
 func TestSigninSuccessUsernameExist(t *testing.T) {
 	expectedMessage := "User created successfully"
 
-	requestBody := &model.User{
+	requestBody := &domain.User{
 		UserID: "testuser_id1",
 		Username: "testusername",
 		Password: "testpass",
@@ -207,7 +207,7 @@ func TestSigninSuccessUsernameExist(t *testing.T) {
 func TestSigninSuccessUsernameNotExist(t *testing.T) {
 	expectedMessage := "User created successfully"
 
-	requestBody := &model.User{
+	requestBody := &domain.User{
 		UserID: "testuser_id2",
 		Password: "testpass",
 	}
@@ -258,7 +258,7 @@ func TestSigninSuccessUsernameNotExist(t *testing.T) {
 func TestSigninUserConflict(t *testing.T) {
 	expectedMessage := "User already exists"
 
-	requestBody := &model.User{
+	requestBody := &domain.User{
 		UserID: "testuser_id1",
 		Username: "testusername",
 		Password: "testpass",

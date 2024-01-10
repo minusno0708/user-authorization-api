@@ -3,7 +3,7 @@ services:
   server:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: build/server/Dockerfile
     volumes:
       - .:/app
     tty: true
@@ -14,10 +14,10 @@ services:
 
   db:
     build:
-      context: db/
+      context: build/db
       dockerfile: Dockerfile
     volumes:
-      - ./db/initdb.d:/docker-entrypoint-initdb.d
+      - ./build/db/initdb.d:/docker-entrypoint-initdb.d
     ports:
       - 3306:3306
     environment:
