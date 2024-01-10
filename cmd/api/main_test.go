@@ -18,13 +18,14 @@ var response struct {
 }
 
 func TestConnectionApi(t *testing.T) {
+	expectedStatus := http.StatusOK
 	expectedMessage := "Connection Successful"
 
 	resp, err := http.Get(endpoint)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != expectedStatus {
 		t.Fatalf("Expected status code 200, got %v", resp.StatusCode)
 	}
 	responseData, _ := ioutil.ReadAll(resp.Body)
@@ -40,6 +41,7 @@ func TestConnectionApi(t *testing.T) {
 }
 
 func TestSigninBodyNotExist(t *testing.T) {
+	expectedStatus := http.StatusBadRequest
 	expectedMessage := "Body does not exist"
 
 	req, err := http.NewRequest("POST", endpoint+"/signin", nil)
@@ -52,7 +54,7 @@ func TestSigninBodyNotExist(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if resp.StatusCode != http.StatusBadRequest {
+	if resp.StatusCode != expectedStatus {
 		t.Fatalf("Expected status code 400, got %v", resp.StatusCode)
 	}
 
@@ -69,6 +71,7 @@ func TestSigninBodyNotExist(t *testing.T) {
 }
 
 func TestSigninUserIDNotExist(t *testing.T) {
+	expectedStatus := http.StatusUnauthorized
 	expectedMessage := "Body is not valid"
 
 	requestBody := &domain.User{
@@ -94,7 +97,7 @@ func TestSigninUserIDNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if resp.StatusCode != http.StatusUnauthorized {
+	if resp.StatusCode != expectedStatus {
 		t.Fatalf("Expected status code 401, got %v", resp.StatusCode)
 	}
 
@@ -111,6 +114,7 @@ func TestSigninUserIDNotExist(t *testing.T) {
 }
 
 func TestSigninPasswordNotExist(t *testing.T) {
+	expectedStatus := http.StatusUnauthorized
 	expectedMessage := "Body is not valid"
 
 	requestBody := &domain.User{
@@ -136,7 +140,7 @@ func TestSigninPasswordNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if resp.StatusCode != http.StatusUnauthorized {
+	if resp.StatusCode != expectedStatus {
 		t.Fatalf("Expected status code 401, got %v", resp.StatusCode)
 	}
 
@@ -153,6 +157,7 @@ func TestSigninPasswordNotExist(t *testing.T) {
 }
 
 func TestSigninSuccessUsernameExist(t *testing.T) {
+	expectedStatus := http.StatusCreated
 	expectedMessage := "User created successfully"
 
 	requestBody := &domain.User{
@@ -179,7 +184,7 @@ func TestSigninSuccessUsernameExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if resp.StatusCode != http.StatusCreated {
+	if resp.StatusCode != expectedStatus {
 		t.Fatalf("Expected status code 201, got %v", resp.StatusCode)
 	}
 
@@ -205,6 +210,7 @@ func TestSigninSuccessUsernameExist(t *testing.T) {
 }
 
 func TestSigninSuccessUsernameNotExist(t *testing.T) {
+	expectedStatus := http.StatusCreated
 	expectedMessage := "User created successfully"
 
 	requestBody := &domain.User{
@@ -230,7 +236,7 @@ func TestSigninSuccessUsernameNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if resp.StatusCode != http.StatusCreated {
+	if resp.StatusCode != expectedStatus {
 		t.Fatalf("Expected status code 201, got %v", resp.StatusCode)
 	}
 
@@ -256,6 +262,7 @@ func TestSigninSuccessUsernameNotExist(t *testing.T) {
 }
 
 func TestSigninUserConflict(t *testing.T) {
+	expectedStatus := http.StatusConflict
 	expectedMessage := "User already exists"
 
 	requestBody := &domain.User{
@@ -282,7 +289,7 @@ func TestSigninUserConflict(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if resp.StatusCode != http.StatusConflict {
+	if resp.StatusCode != expectedStatus {
 		t.Fatalf("Expected status code 209, got %v", resp.StatusCode)
 	}
 
