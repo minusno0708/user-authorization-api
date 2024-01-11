@@ -137,10 +137,13 @@ func TestGetUserUserNotFound(t *testing.T) {
 
 	responseData, _ := ioutil.ReadAll(resp.Body)
 
-	responseMessage := string(responseData)
-	
-  	if responseMessage != expectedMessage {
-		t.Fatalf("Expected message %v, got %v", expectedMessage, responseMessage)
+	err = json.Unmarshal(responseData, &response)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if response.Message != expectedMessage {
+		t.Fatalf("Expected message %v, got %v", expectedMessage, response.Message)
 	}
 }
 
