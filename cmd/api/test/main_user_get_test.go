@@ -150,7 +150,7 @@ func TestGetUserSuccess(t *testing.T) {
 	expectedMessage := "User can be acquired"
 	expectedUserInfo := domain.User{
 		UserID: "testuser",
-		Username: "testuser",
+		Username: "testname",
 	}
 
 	requestBody := &domain.User{

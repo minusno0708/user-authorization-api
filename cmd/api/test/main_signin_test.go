@@ -131,8 +131,8 @@ func TestSigninSuccessUsernameExist(t *testing.T) {
 	expectedMessage := "User created successfully"
 
 	requestBody := &domain.User{
-		UserID: "testuser_id1",
-		Username: "testusername",
+		UserID: "testuser",
+		Username: "testname",
 		Password: "testpass",
 	}
 
@@ -184,7 +184,7 @@ func TestSigninSuccessUsernameNotExist(t *testing.T) {
 	expectedMessage := "User created successfully"
 
 	requestBody := &domain.User{
-		UserID: "testuser_id2",
+		UserID: "testuser_name_not_exist",
 		Password: "testpass",
 	}
 
@@ -236,8 +236,8 @@ func TestSigninUserConflict(t *testing.T) {
 	expectedMessage := "User already exists"
 
 	requestBody := &domain.User{
-		UserID: "testuser_id1",
-		Username: "testusername",
+		UserID: "testuser",
+		Username: "testname",
 		Password: "testpass",
 	}
 
