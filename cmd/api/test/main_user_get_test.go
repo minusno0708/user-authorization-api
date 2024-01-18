@@ -145,6 +145,45 @@ func TestGetUserUserNotFound(t *testing.T) {
 	}
 }
 
+func TestGetUserPasswordNotCorrect(t *testing.T) {
+	expectedStatusCode := http.StatusUnauthorized
+	expectedMessage := "Password is incorrect"
+
+	requestBody := &domain.User{
+		Password: "not_correct_pass",
+	}
+
+	jsonString, err := json.Marshal(requestBody)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req, err := http.NewRequest("GET", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
+	if err != nil {
+		t.Fatal(err)
+	}
+	client := &http.Client{}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if resp.StatusCode != expectedStatusCode {
+		t.Fatalf("Expected status code %v, got %v", expectedStatusCode, resp.StatusCode)
+	}
+
+	responseData, _ := ioutil.ReadAll(resp.Body)
+
+	err = json.Unmarshal(responseData, &response)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if response.Message != expectedMessage {
+		t.Fatalf("Expected message %v, got %v", expectedMessage, response.Message)
+	}
+}
+
 func TestGetUserSuccess(t *testing.T) {
 	expectedStatusCode := http.StatusOK
 	expectedMessage := "User can be acquired"
