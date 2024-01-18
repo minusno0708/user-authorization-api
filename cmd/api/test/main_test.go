@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"encoding/json"
 	"testing"
+	"bytes"
 
 	"user-register-api/domain"
 )
@@ -16,11 +17,34 @@ var response struct {
 	User domain.User `json:"user"`
 }
 
+func sendRequest(method string, endpoint string, jsonBody *bytes.Buffer) (*http.Response, error) {
+	var req *http.Request
+	var err error
+
+	if jsonBody != nil {
+		req, err = http.NewRequest(method, endpoint, jsonBody)
+	} else {
+		req, err = http.NewRequest(method, endpoint, nil)
+	}
+	
+	if err != nil {
+		return nil, err
+	}
+	client := &http.Client{}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
 func TestConnectionApi(t *testing.T) {
 	expectedStatusCode := http.StatusOK
 	expectedMessage := "Connection Successful"
 
-	resp, err := http.Get(endpoint)
+	resp, err := sendRequest("GET", endpoint, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
