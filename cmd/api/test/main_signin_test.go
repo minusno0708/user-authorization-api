@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"net/http"
-	"io/ioutil"
 	"encoding/json"
 	"testing"
 
@@ -18,20 +17,11 @@ func TestSigninBodyNotExist(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if resp.StatusCode != expectedStatusCode {
-		t.Fatalf("Expected status code %v, got %v", expectedStatusCode, resp.StatusCode)
-	}
 
-	responseData, _ := ioutil.ReadAll(resp.Body)
-
-	err = json.Unmarshal(responseData, &response)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	if response.Message != expectedMessage {
-		t.Fatalf("Expected message %v, got %v", expectedMessage, response.Message)
-	}	
 }
 
 func TestSigninUserIDNotExist(t *testing.T) {
@@ -53,19 +43,9 @@ func TestSigninUserIDNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if resp.StatusCode != expectedStatusCode {
-		t.Fatalf("Expected status code %v, got %v", expectedStatusCode, resp.StatusCode)
-	}
-
-	responseData, _ := ioutil.ReadAll(resp.Body)
-
-	err = json.Unmarshal(responseData, &response)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	if response.Message != expectedMessage {
-		t.Fatalf("Expected message %v, got %v", expectedMessage, response.Message)
 	}
 }
 
@@ -88,19 +68,9 @@ func TestSigninPasswordNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if resp.StatusCode != expectedStatusCode {
-		t.Fatalf("Expected status code %v, got %v", expectedStatusCode, resp.StatusCode)
-	}
-
-	responseData, _ := ioutil.ReadAll(resp.Body)
-
-	err = json.Unmarshal(responseData, &response)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	if response.Message != expectedMessage {
-		t.Fatalf("Expected message %v, got %v", expectedMessage, response.Message)
 	}
 }
 
@@ -124,18 +94,9 @@ func TestSigninSuccessUsernameExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if resp.StatusCode != expectedStatusCode {
-		t.Fatalf("Expected status code %v, got %v", expectedStatusCode, resp.StatusCode)
-	}
-
-	responseData, _ := ioutil.ReadAll(resp.Body)
-	err = json.Unmarshal(responseData, &response)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	if response.Message != expectedMessage {
-		t.Fatalf("Expected message %v, got %v", expectedMessage, response.Message)
 	}
 
 	if response.User.UserID != requestBody.UserID {
@@ -168,18 +129,9 @@ func TestSigninSuccessUsernameNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if resp.StatusCode != expectedStatusCode {
-		t.Fatalf("Expected status code %v, got %v", expectedStatusCode, resp.StatusCode)
-	}
-
-	responseData, _ := ioutil.ReadAll(resp.Body)
-	err = json.Unmarshal(responseData, &response)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	if response.Message != expectedMessage {
-		t.Fatalf("Expected message %v, got %v", expectedMessage, response.Message)
 	}
 
 	if response.User.UserID != requestBody.UserID {
@@ -213,17 +165,8 @@ func TestSigninUserConflict(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if resp.StatusCode != expectedStatusCode {
-		t.Fatalf("Expected status code %v, got %v", expectedStatusCode, resp.StatusCode)
-	}
-
-	responseData, _ := ioutil.ReadAll(resp.Body)
-	err = json.Unmarshal(responseData, &response)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	if response.Message != expectedMessage {
-		t.Fatalf("Expected message %v, got %v", expectedMessage, response.Message)
 	}
 }

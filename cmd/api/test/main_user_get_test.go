@@ -20,14 +20,14 @@ func TestGetUserParamsNotExist(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if resp.StatusCode != expectedStatusCode {
 		t.Fatalf("Expected status code %v, got %v", expectedStatusCode, resp.StatusCode)
 	}
 
 	responseData, _ := ioutil.ReadAll(resp.Body)
-
-	responseMessage := string(responseData)
 	
+	responseMessage := string(responseData)
   	if responseMessage != expectedMessage {
 		t.Fatalf("Expected message %v, got %v", expectedMessage, responseMessage)
 	}
@@ -41,19 +41,10 @@ func TestGetUserBodyNotExist(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if resp.StatusCode != expectedStatusCode {
-		t.Fatalf("Expected status code %v, got %v", expectedStatusCode, resp.StatusCode)
-	}
-
-	responseData, _ := ioutil.ReadAll(resp.Body)
-
-	err = json.Unmarshal(responseData, &response)
+	
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	if response.Message != expectedMessage {
-		t.Fatalf("Expected message %v, got %v", expectedMessage, response.Message)
 	}
 }
 
@@ -72,19 +63,10 @@ func TestGetUserPasswordNotExist(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if resp.StatusCode != expectedStatusCode {
-		t.Fatalf("Expected status code %v, got %v", expectedStatusCode, resp.StatusCode)
-	}
-
-	responseData, _ := ioutil.ReadAll(resp.Body)
-
-	err = json.Unmarshal(responseData, &response)
+	
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	if response.Message != expectedMessage {
-		t.Fatalf("Expected message %v, got %v", expectedMessage, response.Message)
 	}
 }
 
@@ -105,19 +87,10 @@ func TestGetUserUserNotFound(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if resp.StatusCode != expectedStatusCode {
-		t.Fatalf("Expected status code %v, got %v", expectedStatusCode, resp.StatusCode)
-	}
-
-	responseData, _ := ioutil.ReadAll(resp.Body)
-
-	err = json.Unmarshal(responseData, &response)
+	
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	if response.Message != expectedMessage {
-		t.Fatalf("Expected message %v, got %v", expectedMessage, response.Message)
 	}
 }
 
@@ -138,19 +111,10 @@ func TestGetUserPasswordNotCorrect(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if resp.StatusCode != expectedStatusCode {
-		t.Fatalf("Expected status code %v, got %v", expectedStatusCode, resp.StatusCode)
-	}
-
-	responseData, _ := ioutil.ReadAll(resp.Body)
-
-	err = json.Unmarshal(responseData, &response)
+	
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	if response.Message != expectedMessage {
-		t.Fatalf("Expected message %v, got %v", expectedMessage, response.Message)
 	}
 }
 
@@ -175,19 +139,10 @@ func TestGetUserSuccess(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if resp.StatusCode != expectedStatusCode {
-		t.Fatalf("Expected status code %v, got %v", expectedStatusCode, resp.StatusCode)
-	}
-
-	responseData, _ := ioutil.ReadAll(resp.Body)
-
-	err = json.Unmarshal(responseData, &response)
+	
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	if response.Message != expectedMessage {
-		t.Fatalf("Expected message %v, got %v", expectedMessage, response.Message)
 	}
 
 	if response.User.UserID != expectedUserInfo.UserID {
