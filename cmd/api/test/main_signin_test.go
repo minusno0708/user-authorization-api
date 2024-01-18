@@ -14,13 +14,7 @@ func TestSigninBodyNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusBadRequest
 	expectedMessage := "Body does not exist"
 
-	req, err := http.NewRequest("POST", endpoint+"/signin", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	client := &http.Client{}
-
-	resp, err := client.Do(req)
+	resp, err := sendRequest("POST", endpoint+"/signin", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -54,15 +48,7 @@ func TestSigninUserIDNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	req, err := http.NewRequest("POST", endpoint+"/signin", bytes.NewBuffer(jsonString))
-	if err != nil {
-		t.Fatal(err)
-	}
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-
-	resp, err := client.Do(req)
+	resp, err := sendRequest("POST", endpoint+"/signin", bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -97,15 +83,7 @@ func TestSigninPasswordNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	req, err := http.NewRequest("POST", endpoint+"/signin", bytes.NewBuffer(jsonString))
-	if err != nil {
-		t.Fatal(err)
-	}
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-
-	resp, err := client.Do(req)
+	resp, err := sendRequest("POST", endpoint+"/signin", bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -141,15 +119,7 @@ func TestSigninSuccessUsernameExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	req, err := http.NewRequest("POST", endpoint+"/signin", bytes.NewBuffer(jsonString))
-	if err != nil {
-		t.Fatal(err)
-	}
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-
-	resp, err := client.Do(req)
+	resp, err := sendRequest("POST", endpoint+"/signin", bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -193,15 +163,7 @@ func TestSigninSuccessUsernameNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	req, err := http.NewRequest("POST", endpoint+"/signin", bytes.NewBuffer(jsonString))
-	if err != nil {
-		t.Fatal(err)
-	}
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-
-	resp, err := client.Do(req)
+	resp, err := sendRequest("POST", endpoint+"/signin", bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -246,15 +208,7 @@ func TestSigninUserConflict(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	req, err := http.NewRequest("POST", endpoint+"/signin", bytes.NewBuffer(jsonString))
-	if err != nil {
-		t.Fatal(err)
-	}
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-
-	resp, err := client.Do(req)
+	resp, err := sendRequest("POST", endpoint+"/signin", bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -16,13 +16,7 @@ func TestGetUserParamsNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusNotFound
 	expectedMessage := "404 page not found"
 
-	req, err := http.NewRequest("GET", endpoint+"/user", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	client := &http.Client{}
-
-	resp, err := client.Do(req)
+	resp, err := sendRequest("GET", endpoint+"/user", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,13 +37,7 @@ func TestGetUserBodyNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusBadRequest
 	expectedMessage := "Body does not exist"
 
-	req, err := http.NewRequest("GET", endpoint+"/user/"+userID, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	client := &http.Client{}
-
-	resp, err := client.Do(req)
+	resp, err := sendRequest("GET", endpoint+"/user/"+userID, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -80,13 +68,7 @@ func TestGetUserPasswordNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	req, err := http.NewRequest("GET", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
-	if err != nil {
-		t.Fatal(err)
-	}
-	client := &http.Client{}
-
-	resp, err := client.Do(req)
+	resp, err := sendRequest("GET", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -119,13 +101,7 @@ func TestGetUserUserNotFound(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	req, err := http.NewRequest("GET", endpoint+"/user/"+"not_exist_user", bytes.NewBuffer(jsonString))
-	if err != nil {
-		t.Fatal(err)
-	}
-	client := &http.Client{}
-
-	resp, err := client.Do(req)
+	resp, err := sendRequest("GET", endpoint+"/user/"+"not_exist_user", bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -158,13 +134,7 @@ func TestGetUserPasswordNotCorrect(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	req, err := http.NewRequest("GET", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
-	if err != nil {
-		t.Fatal(err)
-	}
-	client := &http.Client{}
-
-	resp, err := client.Do(req)
+	resp, err := sendRequest("GET", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -201,13 +171,7 @@ func TestGetUserSuccess(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	req, err := http.NewRequest("GET", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
-	if err != nil {
-		t.Fatal(err)
-	}
-	client := &http.Client{}
-
-	resp, err := client.Do(req)
+	resp, err := sendRequest("GET", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
