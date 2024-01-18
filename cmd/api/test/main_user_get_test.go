@@ -73,9 +73,7 @@ func TestGetUserPasswordNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Body is not valid"
 
-	requestBody := &domain.User{
-		Password: "testpass",
-	}
+	requestBody := &domain.User{}
 
 	jsonString, err := json.Marshal(requestBody)
 	if err != nil {

@@ -92,6 +92,7 @@ func (uh userHandler) HandleUserGet(c *gin.Context) {
 		})
 		return
 	}
+	
 	if requestBody.Password == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Body is not valid",
@@ -119,5 +120,6 @@ func (uh userHandler) HandleUserGet(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User can be acquired",
 		"user": user,
+		"password": requestBody.Password,
 	})
 }
