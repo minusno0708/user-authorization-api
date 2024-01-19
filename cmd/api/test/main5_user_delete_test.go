@@ -139,3 +139,27 @@ func TestDeleteUserSuccess(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestDeleteUserIsUserNotExist(t *tensing.T) {
+	expectedStatusCode := http.StatusNotFound
+	expectedMessage := "User not found"
+
+	requestBody := &domain.User{
+		Password: "testpass",
+	}
+
+	jsonString, err := json.Marshal(requestBody)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err := sendRequest("DELETE", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
