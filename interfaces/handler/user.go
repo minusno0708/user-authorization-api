@@ -132,6 +132,33 @@ func (uh userHandler) HandleUserGet(c *gin.Context) {
 }
 
 func (uh userHandler) HandleUserPut(c *gin.Context) {
+	userID := c.Param("user_id")
+	if userID == "" {
+		c.JSON(http.StatusNotFound, gin.H{
+			"message": "404 page not found",
+		})
+		return
+	}
+
+	var requestBody struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+
+	if err := c.ShouldBindJSON(&requestBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Body does not exist",
+		})
+		return
+	}
+	
+	if requestBody.Password == "" || requestBody.Username == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Body is not valid",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User can be updated",
 	})
