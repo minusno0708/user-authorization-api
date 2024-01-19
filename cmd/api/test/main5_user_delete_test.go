@@ -140,7 +140,7 @@ func TestDeleteUserSuccess(t *testing.T) {
 	}
 }
 
-func TestDeleteUserIsUserNotExist(t *tensing.T) {
+func TestDeleteUserIsUserNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusNotFound
 	expectedMessage := "User not found"
 
