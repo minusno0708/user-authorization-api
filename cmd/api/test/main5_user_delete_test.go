@@ -14,7 +14,7 @@ func TestDeleteUserParamsNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusNotFound
 	expectedMessage := "404 page not found"
 
-	resp, err := sendRequest("DELETE", endpoint+"/delete", nil)
+	resp, err := sendRequest("DELETE", endpoint+"/user", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -57,7 +57,7 @@ func TestDeleteUserPasswordNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("DELETE", endpoint+"/delete/"+userID, bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("DELETE", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -81,7 +81,7 @@ func TestDeleteUserUserNotFound(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("DELETE", endpoint+"/delete/"+"not_exist_user", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("DELETE", endpoint+"/user/"+"not_exist_user", bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -105,7 +105,7 @@ func TestDeleteUserPasswordNotCorrect(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("DELETE", endpoint+"/delete/"+userID, bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("DELETE", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -129,7 +129,7 @@ func TestDeleteUserSuccess(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("DELETE", endpoint+"/delete/"+userID, bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("DELETE", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}

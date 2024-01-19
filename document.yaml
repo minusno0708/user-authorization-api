@@ -317,8 +317,6 @@ paths:
                   summary: データベースへの接続エラー
                   value:
                     message: Database connection error
-
-  /delete/{user_id}:
     delete:
       tags:
         - user
