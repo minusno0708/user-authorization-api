@@ -18,6 +18,7 @@ func main() {
 	r.POST("/signin", userHandler.HandleUserSignin)
 	r.GET("/user/:user_id", userHandler.HandleUserGet)
 	r.PUT("/user/:user_id", userHandler.HandleUserPut)
+	r.DELETE("/user/:user_id", userHandler.HandleUserDelete)
 
 	r.Run(":8080")
 }

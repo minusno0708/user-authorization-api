@@ -13,6 +13,7 @@ type UserHandler interface {
 	HandleUserSignin(c *gin.Context)
 	HandleUserGet(c *gin.Context)
 	HandleUserPut(c *gin.Context)
+	HandleUserDelete(c *gin.Context)
 }
 
 type userHandler struct {
@@ -194,5 +195,11 @@ func (uh userHandler) HandleUserPut(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User can be updated",
 		"user": user,
+	})
+}
+
+func (uh userHandler) HandleUserDelete(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User can be deleted",
 	})
 }
