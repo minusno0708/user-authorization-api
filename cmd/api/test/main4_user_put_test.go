@@ -146,7 +146,7 @@ func TestPutUserPasswordNotCorrect(t *testing.T) {
 
 func TestPutUserSuccess(t *testing.T) {
 	expectedStatusCode := http.StatusOK
-	expectedMessage := "User can be acquired"
+	expectedMessage := "User can be updated"
 	expectedUserInfo := domain.User{
 		UserID: "testuser",
 		Username: "testname_updated",
