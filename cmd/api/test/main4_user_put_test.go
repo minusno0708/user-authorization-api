@@ -35,7 +35,7 @@ func TestPutUserBodyNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusBadRequest
 	expectedMessage := "Body does not exist"
 
-	resp, err := sendRequest("GET", endpoint+"/user/"+userID, nil)
+	resp, err := sendRequest("PUT", endpoint+"/user/"+userID, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
