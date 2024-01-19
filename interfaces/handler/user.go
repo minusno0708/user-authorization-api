@@ -12,6 +12,7 @@ type UserHandler interface {
 	HandleConnectionAPI(c *gin.Context)
 	HandleUserSignin(c *gin.Context)
 	HandleUserGet(c *gin.Context)
+	HandleUserPut(c *gin.Context)
 }
 
 type userHandler struct {
@@ -127,6 +128,11 @@ func (uh userHandler) HandleUserGet(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User can be acquired",
 		"user": user,
-		"password": requestBody.Password,
+	})
+}
+
+func (uh userHandler) HandleUserPut(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User can be updated",
 	})
 }
