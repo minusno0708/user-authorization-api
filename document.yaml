@@ -235,15 +235,19 @@ paths:
             type: "string"
 
       requestBody:
-        description: パスワード
+        description: ユーザー情報
         required: true
         content:
           application/json:
             schema:
               type: object
               required:
+                - username
                 - password
               properties:
+                username:
+                  type: "string"
+                  example: "new_username"
                 password:
                   type: "string"
                   example: "password"
