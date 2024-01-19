@@ -31,6 +31,26 @@ func TestUsecaseInsertUser(t *testing.T) {
 	}
 }
 
+func TestUsecaseUpdateUser(t *testing.T) {
+	updatedUsername := "updated_username"
+
+	db, err := config.ConnectDB()
+	if err != nil {
+		t.Error(err)
+	}
+	defer db.Close()
+	userPersistence := persistence.NewUserPersistence()
+	userUseCase := NewUserUseCase(userPersistence)
+
+	user, err := userUseCase.UpdateUsername(db, testUser.UserID, updatedUsername)
+	if err != nil {
+		t.Error(err)
+	}
+	if user.Username != updatedUsername {
+		t.Errorf("Username is not correct")
+	}
+}
+
 func TestUsecaseDeleteUser(t *testing.T) {
 	db, err := config.ConnectDB()
 	if err != nil {

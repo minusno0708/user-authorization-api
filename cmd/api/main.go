@@ -17,6 +17,7 @@ func main() {
 	r.GET("/", userHandler.HandleConnectionAPI)
 	r.POST("/signin", userHandler.HandleUserSignin)
 	r.GET("/user/:user_id", userHandler.HandleUserGet)
+	r.PUT("/user/:user_id", userHandler.HandleUserPut)
 
 	r.Run(":8080")
 }

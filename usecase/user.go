@@ -10,7 +10,7 @@ import (
 type UserUseCase interface {
 	InsertUser(db *sql.DB, userID, username, password string) (*domain.User, error)
 	FindUserByUserID(db *sql.DB, userID string) (*domain.User, error)
-	UpdateUsername(db *sql.DB, userID, username string) error
+	UpdateUsername(db *sql.DB, userID, username string) (*domain.User, error)
 	DeleteUser(db *sql.DB, userID string) error
 }
 
@@ -50,12 +50,18 @@ func (uu userUseCase) FindUserByUserID(db *sql.DB, userID string) (*domain.User,
 	return user, nil
 }
 
-func (uu userUseCase) UpdateUsername(db *sql.DB, userID, username string) error {
+func (uu userUseCase) UpdateUsername(db *sql.DB, userID, username string) (*domain.User, error) {
 	err := uu.userRepository.UpdateUsername(db, userID, username)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+
+	user, err := uu.userRepository.FindUserByUserID(db, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 func (uu userUseCase) DeleteUser(db *sql.DB, userID string) error {

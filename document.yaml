@@ -235,15 +235,19 @@ paths:
             type: "string"
 
       requestBody:
-        description: パスワード
+        description: ユーザー情報
         required: true
         content:
           application/json:
             schema:
               type: object
               required:
+                - username
                 - password
               properties:
+                username:
+                  type: "string"
+                  example: "new_username"
                 password:
                   type: "string"
                   example: "password"
@@ -290,17 +294,18 @@ paths:
                   summary: Bodyの形式が正しくない場合
                   value:
                     message: Body is not valid
-        409:
-          description: Conflict
+        404:
+          description: Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserAlreadyExistsError'
+                oneOf:
+                  - $ref: '#/components/schemas/UserNotFoundError'
               examples:
                 response1:
-                  summary: 既に存在するユーザーIDの場合
+                  summary: 存在しないユーザーIDの場合
                   value:
-                    message: User already exists
+                    message: User not found
         500:
           description: Internal Server Error
           content:
@@ -375,17 +380,18 @@ paths:
                   summary: Bodyの形式が正しくない場合
                   value:
                     message: Body is not valid
-        409:
-          description: Conflict
+        404:
+          description: Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserAlreadyExistsError'
+                oneOf:
+                  - $ref: '#/components/schemas/UserNotFoundError'
               examples:
                 response1:
-                  summary: 既に存在するユーザーIDの場合
+                  summary: 存在しないユーザーIDの場合
                   value:
-                    message: User already exists
+                    message: User not found
         500:
           description: Internal Server Error
           content:
