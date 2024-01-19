@@ -159,7 +159,32 @@ func (uh userHandler) HandleUserPut(c *gin.Context) {
 		return
 	}
 
+	db, err := config.ConnectDB()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Database connection error",
+		})
+		return
+	}
+	defer db.Close()
+
+	user, err := uh.userUseCase.FindUserByUserID(db, userID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"message": "User not found",
+		})
+		return
+	}
+
+	if user.Password != requestBody.Password {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Password is incorrect",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User can be updated",
+		"user": user,
 	})
 }
