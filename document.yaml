@@ -207,7 +207,7 @@ paths:
                 response1:
                   summary: 存在しないユーザーIDの場合
                   value:
-                    message: User Not Found
+                    message: User not found
         500:
           description: Internal Server Error
           content:
