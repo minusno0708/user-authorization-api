@@ -10,11 +10,11 @@ import (
 	"user-register-api/domain"
 )
 
-func TestPutUserParamsNotExist(t *testing.T) {
+func TestDeleteUserParamsNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusNotFound
 	expectedMessage := "404 page not found"
 
-	resp, err := sendRequest("PUT", endpoint+"/user", nil)
+	resp, err := sendRequest("DELETE", endpoint+"/user", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -31,11 +31,11 @@ func TestPutUserParamsNotExist(t *testing.T) {
 	}
 }
 
-func TestPutUserBodyNotExist(t *testing.T) {
+func TestDeleteUserBodyNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusBadRequest
 	expectedMessage := "Body does not exist"
 
-	resp, err := sendRequest("PUT", endpoint+"/user/"+userID, nil)
+	resp, err := sendRequest("DELETE", endpoint+"/user/"+userID, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -46,20 +46,18 @@ func TestPutUserBodyNotExist(t *testing.T) {
 	}
 }
 
-func TestPutUserPasswordNotExist(t *testing.T) {
+func TestDeleteUserPasswordNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Body is not valid"
 
-	requestBody := &domain.User{
-		Username: "testname",
-	}
+	requestBody := &domain.User{}
 
 	jsonString, err := json.Marshal(requestBody)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("PUT", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("DELETE", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -70,36 +68,11 @@ func TestPutUserPasswordNotExist(t *testing.T) {
 	}
 }
 
-func TestPutUserUsernameNotExist(t *testing.T) {
-	expectedStatusCode := http.StatusUnauthorized
-	expectedMessage := "Body is not valid"
-
-	requestBody := &domain.User{
-		Password: "testpass",
-	}
-
-	jsonString, err := json.Marshal(requestBody)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	resp, err := sendRequest("PUT", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
-	if err != nil {
-		t.Fatal(err)
-	}
-	
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestPutUserUserNotFound(t *testing.T) {
+func TestDeleteUserUserNotFound(t *testing.T) {
 	expectedStatusCode := http.StatusNotFound
 	expectedMessage := "User not found"
 
 	requestBody := &domain.User{
-		Username: "testname",
 		Password: "testpass",
 	}
 
@@ -108,7 +81,7 @@ func TestPutUserUserNotFound(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("PUT", endpoint+"/user/"+"not_exist_user", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("DELETE", endpoint+"/user/"+"not_exist_user", bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -119,12 +92,11 @@ func TestPutUserUserNotFound(t *testing.T) {
 	}
 }
 
-func TestPutUserPasswordNotCorrect(t *testing.T) {
+func TestDeleteUserPasswordNotCorrect(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Password is incorrect"
 
 	requestBody := &domain.User{
-		Username: "testname",
 		Password: "not_correct_pass",
 	}
 
@@ -133,7 +105,7 @@ func TestPutUserPasswordNotCorrect(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("PUT", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("DELETE", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -144,16 +116,11 @@ func TestPutUserPasswordNotCorrect(t *testing.T) {
 	}
 }
 
-func TestPutUserSuccess(t *testing.T) {
+func TestDeleteUserSuccess(t *testing.T) {
 	expectedStatusCode := http.StatusOK
-	expectedMessage := "User can be updated"
-	expectedUserInfo := domain.User{
-		UserID: "testuser",
-		Username: "testname_updated",
-	}
+	expectedMessage := "User can be deleted"
 
 	requestBody := &domain.User{
-		Username: "testname_updated",
 		Password: "testpass",
 	}
 
@@ -162,7 +129,7 @@ func TestPutUserSuccess(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("PUT", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("DELETE", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -171,11 +138,28 @@ func TestPutUserSuccess(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+}
 
-	if response.User.UserID != expectedUserInfo.UserID {
-		t.Fatalf("Expected user id %v, got %v", expectedUserInfo.UserID, response.User.UserID)
+func TestDeleteUserIsUserNotExist(t *testing.T) {
+	expectedStatusCode := http.StatusNotFound
+	expectedMessage := "User not found"
+
+	requestBody := &domain.User{
+		Password: "testpass",
 	}
-	if response.User.Username != expectedUserInfo.Username {
-		t.Fatalf("Expected username %v, got %v", expectedUserInfo.Username, response.User.Username)
+
+	jsonString, err := json.Marshal(requestBody)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err := sendRequest("DELETE", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	if err != nil {
+		t.Fatal(err)
 	}
 }
