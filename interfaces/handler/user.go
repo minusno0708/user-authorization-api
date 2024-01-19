@@ -249,6 +249,14 @@ func (uh userHandler) HandleUserDelete(c *gin.Context) {
 		return
 	}
 
+	err = uh.userUseCase.DeleteUser(db, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "User can not be deleted",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User can be deleted",
 	})
