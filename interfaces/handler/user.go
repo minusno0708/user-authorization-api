@@ -183,6 +183,14 @@ func (uh userHandler) HandleUserPut(c *gin.Context) {
 		return
 	}
 
+	user, err = uh.userUseCase.UpdateUsername(db, userID, requestBody.Username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "User can not be updated",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User can be updated",
 		"user": user,
