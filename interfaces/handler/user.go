@@ -26,6 +26,11 @@ func NewUserHandler(uu usecase.UserUseCase) UserHandler {
 	}
 }
 
+type responseUser struct {
+	UserID string `json:"user_id"`
+	Username string `json:"username"`
+}
+
 func (uh userHandler) HandleConnectionAPI(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Connection Successful",
@@ -128,7 +133,10 @@ func (uh userHandler) HandleUserGet(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User can be acquired",
-		"user": user,
+		"user": &responseUser{
+			UserID: "testuser",
+			Username: "testname",
+		},
 	})
 }
 
@@ -194,7 +202,10 @@ func (uh userHandler) HandleUserPut(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User can be updated",
-		"user": user,
+		"user": &responseUser{
+			UserID: user.UserID,
+			Username: user.Username,
+		},
 	})
 }
 
