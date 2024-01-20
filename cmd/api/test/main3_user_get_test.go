@@ -145,10 +145,7 @@ func TestGetUserSuccess(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if response.User.UserID != expectedUserInfo.UserID {
-		t.Fatalf("Expected user id %v, got %v", expectedUserInfo.UserID, response.User.UserID)
-	}
-	if response.User.Username != expectedUserInfo.Username {
-		t.Fatalf("Expected username %v, got %v", expectedUserInfo.Username, response.User.Username)
+	if response.User != expectedUserInfo {
+		t.Fatalf("Expected user %v, got %v", expectedUserInfo, response.User)
 	}
 }
