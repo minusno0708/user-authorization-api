@@ -76,7 +76,10 @@ func (uh userHandler) HandleUserSignin(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "User created successfully",
-		"user": user,
+		"user": &responseUser{
+			UserID: user.UserID,
+			Username: user.Username,
+		},
 	})
 }
 
