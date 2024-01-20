@@ -40,7 +40,7 @@ func TestDeleteUserBodyNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 	
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -62,7 +62,7 @@ func TestDeleteUserPasswordNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 	
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -86,7 +86,7 @@ func TestDeleteUserUserNotFound(t *testing.T) {
 		t.Fatal(err)
 	}
 	
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -110,7 +110,7 @@ func TestDeleteUserPasswordNotCorrect(t *testing.T) {
 		t.Fatal(err)
 	}
 	
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -134,7 +134,7 @@ func TestDeleteUserSuccess(t *testing.T) {
 		t.Fatal(err)
 	}
 	
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -158,7 +158,7 @@ func TestDeleteUserIsUserNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}

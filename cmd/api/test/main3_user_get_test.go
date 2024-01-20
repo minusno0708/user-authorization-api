@@ -42,7 +42,7 @@ func TestGetUserBodyNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 	
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -64,7 +64,7 @@ func TestGetUserPasswordNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 	
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -88,7 +88,7 @@ func TestGetUserUserNotFound(t *testing.T) {
 		t.Fatal(err)
 	}
 	
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -112,7 +112,7 @@ func TestGetUserPasswordNotCorrect(t *testing.T) {
 		t.Fatal(err)
 	}
 	
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -121,7 +121,7 @@ func TestGetUserPasswordNotCorrect(t *testing.T) {
 func TestGetUserSuccess(t *testing.T) {
 	expectedStatusCode := http.StatusOK
 	expectedMessage := "User can be acquired"
-	expectedUserInfo := domain.User{
+	expectedUser := &domain.User{
 		UserID: "testuser",
 		Username: "testname",
 	}
@@ -140,12 +140,8 @@ func TestGetUserSuccess(t *testing.T) {
 		t.Fatal(err)
 	}
 	
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, expectedUser)
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	if response.User != expectedUserInfo {
-		t.Fatalf("Expected user %v, got %v", expectedUserInfo, response.User)
 	}
 }

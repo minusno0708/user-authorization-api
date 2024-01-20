@@ -40,7 +40,7 @@ func TestPutUserBodyNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 	
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -64,7 +64,7 @@ func TestPutUserPasswordNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 	
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -88,7 +88,7 @@ func TestPutUserUsernameNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 	
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -113,7 +113,7 @@ func TestPutUserUserNotFound(t *testing.T) {
 		t.Fatal(err)
 	}
 	
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -138,7 +138,7 @@ func TestPutUserPasswordNotCorrect(t *testing.T) {
 		t.Fatal(err)
 	}
 	
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -147,7 +147,7 @@ func TestPutUserPasswordNotCorrect(t *testing.T) {
 func TestPutUserSuccess(t *testing.T) {
 	expectedStatusCode := http.StatusOK
 	expectedMessage := "User can be updated"
-	expectedUserInfo := domain.User{
+	expectedUser := &domain.User{
 		UserID: "testuser",
 		Username: "testname_updated",
 	}
@@ -167,12 +167,8 @@ func TestPutUserSuccess(t *testing.T) {
 		t.Fatal(err)
 	}
 	
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, expectedUser)
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	if response.User != expectedUserInfo {
-		t.Fatalf("Expected user %v, got %v", expectedUserInfo, response.User)
 	}
 }
