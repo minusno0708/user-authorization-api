@@ -21,12 +21,12 @@ func (e *errorString) Error() string {
 	return e.message
 }
 
-func sendRequest(method string, endpoint string, jsonBody *bytes.Buffer) (*http.Response, error) {
+func sendRequest(method string, endpoint string, sendingBody *bytes.Buffer) (*http.Response, error) {
 	var req *http.Request
 	var err error
 
-	if jsonBody != nil {
-		req, err = http.NewRequest(method, endpoint, jsonBody)
+	if sendingBody != nil {
+		req, err = http.NewRequest(method, endpoint, sendingBody)
 	} else {
 		req, err = http.NewRequest(method, endpoint, nil)
 	}
