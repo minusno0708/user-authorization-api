@@ -13,11 +13,6 @@ import (
 
 const endpoint = "http://localhost:8080"
 
-var response struct {
-	Message string `json:"message"`
-	User domain.User `json:"user"`
-}
-
 type errorString struct {
 	message string
 }
@@ -26,12 +21,12 @@ func (e *errorString) Error() string {
 	return e.message
 }
 
-func sendRequest(method string, endpoint string, jsonBody *bytes.Buffer) (*http.Response, error) {
+func sendRequest(method string, endpoint string, sendingBody *bytes.Buffer) (*http.Response, error) {
 	var req *http.Request
 	var err error
 
-	if jsonBody != nil {
-		req, err = http.NewRequest(method, endpoint, jsonBody)
+	if sendingBody != nil {
+		req, err = http.NewRequest(method, endpoint, sendingBody)
 	} else {
 		req, err = http.NewRequest(method, endpoint, nil)
 	}
@@ -49,7 +44,12 @@ func sendRequest(method string, endpoint string, jsonBody *bytes.Buffer) (*http.
 	return resp, nil
 }
 
-func verifyExpectedResponse(resp *http.Response, expectedStatusCode int, expectedMessage string) error {
+func verifyExpectedResponse(resp *http.Response, expectedStatusCode int, expectedMessage string, expectedUser *domain.User) error {
+	var response struct {
+		Message string `json:"message"`
+		User domain.User `json:"user"`
+	}
+
 	if resp.StatusCode != expectedStatusCode {
 		return &errorString{message: fmt.Sprintf("Expected status code %v, got %v", expectedStatusCode, resp.StatusCode)}
 	}
@@ -65,6 +65,12 @@ func verifyExpectedResponse(resp *http.Response, expectedStatusCode int, expecte
 		return &errorString{message: fmt.Sprintf("Expected message %v, got %v", expectedMessage, response.Message)}
 	}
 
+	if expectedUser != nil {
+		if response.User != *expectedUser {
+			return &errorString{message: fmt.Sprintf("Expected user %v, got %v", expectedUser, response.User)}
+		}
+	}
+
 	return nil
 }
 
@@ -77,7 +83,7 @@ func TestConnectionApi(t *testing.T) {
 		t.Fatal(err)
 	}
 	
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -18,7 +18,7 @@ func TestSigninBodyNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,7 +43,7 @@ func TestSigninUserIDNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -68,7 +68,7 @@ func TestSigninPasswordNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -84,6 +84,11 @@ func TestSigninSuccessUsernameExist(t *testing.T) {
 		Password: "testpass",
 	}
 
+	expectedUser := &domain.User{
+		UserID: "testuser",
+		Username: "testname",
+	}	
+
 	jsonString, err := json.Marshal(requestBody)
 	if err != nil {
 		t.Fatal(err)
@@ -94,19 +99,9 @@ func TestSigninSuccessUsernameExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, expectedUser)
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	if response.User.UserID != requestBody.UserID {
-		t.Fatalf("Expected user_id %v, got %v", requestBody.UserID, response.User.UserID)
-	}
-	if response.User.Username != requestBody.Username {
-		t.Fatalf("Expected username %v, got %v", requestBody.Username, response.User.Username)
-	}
-	if response.User.Password != requestBody.Password {
-		t.Fatalf("Expected password %v, got %v", requestBody.Password, response.User.Password)
 	}
 }
 
@@ -119,6 +114,11 @@ func TestSigninSuccessUsernameNotExist(t *testing.T) {
 		Password: "testpass",
 	}
 
+	expectedUser := &domain.User{
+		UserID: "testuser_name_not_exist",
+		Username: "testuser_name_not_exist",
+	}
+
 	jsonString, err := json.Marshal(requestBody)
 	if err != nil {
 		t.Fatal(err)
@@ -129,19 +129,9 @@ func TestSigninSuccessUsernameNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, expectedUser)
 	if err != nil {
 		t.Fatal(err)
-	}
-
-	if response.User.UserID != requestBody.UserID {
-		t.Fatalf("Expected user_id %v, got %v", requestBody.UserID, response.User.UserID)
-	}
-	if response.User.Username != requestBody.UserID {
-		t.Fatalf("Expected username %v, got %v", requestBody.UserID, response.User.Username)
-	}
-	if response.User.Password != requestBody.Password {
-		t.Fatalf("Expected password %v, got %v", requestBody.Password, response.User.Password)
 	}
 }
 
@@ -165,7 +155,7 @@ func TestSigninUserConflict(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
