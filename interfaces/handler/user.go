@@ -11,7 +11,7 @@ import (
 
 type UserHandler interface {
 	HandleConnectionAPI(c *gin.Context)
-	HandleUserCreate(c *gin.Context)
+	HandleUserSignup(c *gin.Context)
 	HandleUserGet(c *gin.Context)
 	HandleUserPut(c *gin.Context)
 	HandleUserDelete(c *gin.Context)
@@ -38,7 +38,7 @@ func (uh userHandler) HandleConnectionAPI(c *gin.Context) {
 	})
 }
 
-func (uh userHandler) HandleUserCreate(c *gin.Context) {
+func (uh userHandler) HandleUserSignup(c *gin.Context) {
 	var requestBody struct {
 		UserID   string `json:"user_id"`
 		Username string `json:"username"`

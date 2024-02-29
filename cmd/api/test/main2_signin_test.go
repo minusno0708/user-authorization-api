@@ -9,11 +9,11 @@ import (
 	"user-register-api/domain"
 )
 
-func TestCreateBodyNotExist(t *testing.T) {
+func TestSignupBodyNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusBadRequest
 	expectedMessage := "Body does not exist"
 
-	resp, err := sendRequest("POST", endpoint+"/create", nil)
+	resp, err := sendRequest("POST", endpoint+"/signup", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -24,7 +24,7 @@ func TestCreateBodyNotExist(t *testing.T) {
 	}
 }
 
-func TestCreateUserIDNotExist(t *testing.T) {
+func TestSignupUserIDNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Body is not valid"
 
@@ -38,7 +38,7 @@ func TestCreateUserIDNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("POST", endpoint+"/create", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("POST", endpoint+"/signup", bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -49,7 +49,7 @@ func TestCreateUserIDNotExist(t *testing.T) {
 	}
 }
 
-func TestCreatePasswordNotExist(t *testing.T) {
+func TestSignupPasswordNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Body is not valid"
 
@@ -63,7 +63,7 @@ func TestCreatePasswordNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("POST", endpoint+"/create", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("POST", endpoint+"/signup", bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -74,9 +74,9 @@ func TestCreatePasswordNotExist(t *testing.T) {
 	}
 }
 
-func TestCreateSuccessUsernameExist(t *testing.T) {
-	expectedStatusCode := http.StatusCreated
-	expectedMessage := "User created successfully"
+func TestSignupSuccessUsernameExist(t *testing.T) {
+	expectedStatusCode := http.StatusSignupd
+	expectedMessage := "User Signupd successfully"
 
 	requestBody := &domain.User{
 		UserID:   "testuser",
@@ -94,7 +94,7 @@ func TestCreateSuccessUsernameExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("POST", endpoint+"/create", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("POST", endpoint+"/signup", bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -105,9 +105,9 @@ func TestCreateSuccessUsernameExist(t *testing.T) {
 	}
 }
 
-func TestCreateSuccessUsernameNotExist(t *testing.T) {
-	expectedStatusCode := http.StatusCreated
-	expectedMessage := "User created successfully"
+func TestSignupSuccessUsernameNotExist(t *testing.T) {
+	expectedStatusCode := http.StatusSignupd
+	expectedMessage := "User Signupd successfully"
 
 	requestBody := &domain.User{
 		UserID:   "testuser_name_not_exist",
@@ -124,7 +124,7 @@ func TestCreateSuccessUsernameNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("POST", endpoint+"/create", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("POST", endpoint+"/signup", bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -135,7 +135,7 @@ func TestCreateSuccessUsernameNotExist(t *testing.T) {
 	}
 }
 
-func TestCreateUserConflict(t *testing.T) {
+func TestSignupUserConflict(t *testing.T) {
 	expectedStatusCode := http.StatusConflict
 	expectedMessage := "User already exists"
 
@@ -150,7 +150,7 @@ func TestCreateUserConflict(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("POST", endpoint+"/create", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("POST", endpoint+"/signup", bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}

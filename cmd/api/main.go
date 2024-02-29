@@ -15,7 +15,7 @@ func main() {
 
 	r := gin.Default()
 	r.GET("/", userHandler.HandleConnectionAPI)
-	r.POST("/create", userHandler.HandleUserCreate)
+	r.POST("/signup", userHandler.HandleUserSignUp)
 	r.GET("/user/:user_id", userHandler.HandleUserGet)
 	r.PUT("/user/:user_id", userHandler.HandleUserPut)
 	r.DELETE("/user/:user_id", userHandler.HandleUserDelete)
