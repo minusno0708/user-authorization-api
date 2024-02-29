@@ -401,6 +401,77 @@ paths:
                   summary: データベースへの接続エラー
                   value:
                     message: Database connection error
+  /signin:
+    post:
+      tags:
+        - user
+      description: |
+        ログイン用のエンドポイント
+
+      requestBody:
+        description: ユーザー情報
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - password
+              properties:
+                user_id:
+                  type: "string"
+                  example: "user_id"
+                password:
+                  type: "string"
+                  example: "password"
+
+      responses:
+        201:
+          description: Successful responses
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Token can be acquired"
+                  token:
+                    type: string
+                    example: ""
+  /signout:
+    delete:
+      tags:
+        - user
+      description: |
+        ログアウト用のエンドポイント
+
+      requestBody:
+        description: トークン
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: "string"
+                  example: ""
+
+      responses:
+        200:
+          description: Successful responses
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Token can be deleted"
 
 components:
   schemas:
