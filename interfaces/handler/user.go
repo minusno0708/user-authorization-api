@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+
 	"github.com/gin-gonic/gin"
 
 	"user-register-api/config"
@@ -10,7 +11,7 @@ import (
 
 type UserHandler interface {
 	HandleConnectionAPI(c *gin.Context)
-	HandleUserSignin(c *gin.Context)
+	HandleUserCreate(c *gin.Context)
 	HandleUserGet(c *gin.Context)
 	HandleUserPut(c *gin.Context)
 	HandleUserDelete(c *gin.Context)
@@ -27,7 +28,7 @@ func NewUserHandler(uu usecase.UserUseCase) UserHandler {
 }
 
 type responseUser struct {
-	UserID string `json:"user_id"`
+	UserID   string `json:"user_id"`
 	Username string `json:"username"`
 }
 
@@ -37,7 +38,7 @@ func (uh userHandler) HandleConnectionAPI(c *gin.Context) {
 	})
 }
 
-func (uh userHandler) HandleUserSignin(c *gin.Context) {
+func (uh userHandler) HandleUserCreate(c *gin.Context) {
 	var requestBody struct {
 		UserID   string `json:"user_id"`
 		Username string `json:"username"`
@@ -77,7 +78,7 @@ func (uh userHandler) HandleUserSignin(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "User created successfully",
 		"user": &responseUser{
-			UserID: user.UserID,
+			UserID:   user.UserID,
 			Username: user.Username,
 		},
 	})
@@ -102,7 +103,7 @@ func (uh userHandler) HandleUserGet(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	if requestBody.Password == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Body is not valid",
@@ -137,7 +138,7 @@ func (uh userHandler) HandleUserGet(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User can be acquired",
 		"user": &responseUser{
-			UserID: "testuser",
+			UserID:   "testuser",
 			Username: "testname",
 		},
 	})
@@ -163,7 +164,7 @@ func (uh userHandler) HandleUserPut(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	if requestBody.Password == "" || requestBody.Username == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Body is not valid",
@@ -206,7 +207,7 @@ func (uh userHandler) HandleUserPut(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User can be updated",
 		"user": &responseUser{
-			UserID: user.UserID,
+			UserID:   user.UserID,
 			Username: user.Username,
 		},
 	})
@@ -231,7 +232,7 @@ func (uh userHandler) HandleUserDelete(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	if requestBody.Password == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Body is not valid",

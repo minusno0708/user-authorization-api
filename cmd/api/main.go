@@ -3,9 +3,9 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 
+	"user-register-api/infrastructure/persistence"
 	"user-register-api/interfaces/handler"
 	"user-register-api/usecase"
-	"user-register-api/infrastructure/persistence"
 )
 
 func main() {
@@ -15,7 +15,7 @@ func main() {
 
 	r := gin.Default()
 	r.GET("/", userHandler.HandleConnectionAPI)
-	r.POST("/signin", userHandler.HandleUserSignin)
+	r.POST("/create", userHandler.HandleUserCreate)
 	r.GET("/user/:user_id", userHandler.HandleUserGet)
 	r.PUT("/user/:user_id", userHandler.HandleUserPut)
 	r.DELETE("/user/:user_id", userHandler.HandleUserDelete)
