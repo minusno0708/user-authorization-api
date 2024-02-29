@@ -440,6 +440,46 @@ paths:
                   token:
                     type: string
                     example: ""
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BodyDoesNotExistError'
+              examples:
+                response1:
+                  summary: Bodyが存在しない場合
+                  value:
+                    message: Body does not exist
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/BodyValidationError'
+                  - $ref: '#/components/schemas/PassIncorrectError'
+              examples:
+                response1:
+                  summary: Bodyの形式が正しくない場合
+                  value:
+                    message: Body is not valid
+                response2:
+                  summary: パスワードが正しくない場合
+                  value:
+                    message: Password is incorrect
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/UserNotFoundError'
+              examples:
+                response1:
+                  summary: 存在しないユーザーIDの場合
+                  value:
+                    message: User not found
   /signout:
     delete:
       tags:
@@ -472,6 +512,40 @@ paths:
                   message:
                     type: string
                     example: "Token can be deleted"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BodyDoesNotExistError'
+              examples:
+                response1:
+                  summary: Bodyが存在しない場合
+                  value:
+                    message: Body does not exist
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BodyValidationError'
+              examples:
+                response1:
+                  summary: Bodyの形式が正しくない場合
+                  value:
+                    message: Body is not valid
+        403:
+          description: Access Denied
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/AccessDeniedError'
+              examples:
+                response1:
+                  summary: トークンが正しくない場合
+                  value:
+                    message: Access denied
 
 components:
   schemas:
@@ -529,3 +603,12 @@ components:
             message:
               type: string
               example: "Database connection error"
+    AccessDeniedError:
+      type: object
+      properties:
+        forbidden_error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Access denied"
