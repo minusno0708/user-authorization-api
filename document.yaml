@@ -528,24 +528,57 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BodyValidationError'
+                oneOf:
+                  - $ref: '#/components/schemas/BodyValidationError'
+                  - $ref: '#/components/schemas/FailedAuthenticateError'
               examples:
                 response1:
                   summary: Bodyの形式が正しくない場合
                   value:
                     message: Body is not valid
-        403:
-          description: Access Denied
+                response2:
+                  summary: 認証に失敗した場合
+                  value:
+                    message: Failed to authenticate
+        
+  /user:
+    get:
+      tags:
+        - user
+      description: |
+        ユーザー情報を取得する
+
+      responses:
+        200:
+          description: Successful responses
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/AccessDeniedError'
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User can be acquired"
+                  user:
+                    type: object
+                    properties:
+                      user_id:
+                        type: string
+                        example: "user_id"
+                      username:
+                        type: string
+                        example: "username"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedAuthenticateError'
               examples:
                 response1:
-                  summary: トークンが正しくない場合
+                  summary: 認証に失敗した場合
                   value:
-                    message: Access denied
+                    message: Failed to authenticate
 
 components:
   schemas:
@@ -603,12 +636,12 @@ components:
             message:
               type: string
               example: "Database connection error"
-    AccessDeniedError:
+    FailedAuthenticateError:
       type: object
       properties:
-        forbidden_error:
+        failed_authenticate_error:
           type: object
           properties:
             message:
               type: string
-              example: "Access denied"
+              example: "Failed to authenticate"
