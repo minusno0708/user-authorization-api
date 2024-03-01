@@ -541,7 +541,7 @@ paths:
                   value:
                     message: Failed to authenticate
         
-  /user:
+  /account:
     get:
       tags:
         - user

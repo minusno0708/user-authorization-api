@@ -22,7 +22,7 @@ func main() {
 
 	r.POST("/signin", userHandler.HandleSignin)
 	r.DELETE("/signout", userHandler.HandleSignout)
-	r.GET("/user", userHandler.HandleUser)
+	r.GET("/account", userHandler.HandleUser)
 
 	r.Run(":8080")
 }
