@@ -75,8 +75,8 @@ func TestSignupPasswordNotExist(t *testing.T) {
 }
 
 func TestSignupSuccessUsernameExist(t *testing.T) {
-	expectedStatusCode := http.StatusSignupd
-	expectedMessage := "User Signupd successfully"
+	expectedStatusCode := http.StatusCreated
+	expectedMessage := "User created successfully"
 
 	requestBody := &domain.User{
 		UserID:   "testuser",
@@ -106,8 +106,8 @@ func TestSignupSuccessUsernameExist(t *testing.T) {
 }
 
 func TestSignupSuccessUsernameNotExist(t *testing.T) {
-	expectedStatusCode := http.StatusSignupd
-	expectedMessage := "User Signupd successfully"
+	expectedStatusCode := http.StatusCreated
+	expectedMessage := "User created successfully"
 
 	requestBody := &domain.User{
 		UserID:   "testuser_name_not_exist",
