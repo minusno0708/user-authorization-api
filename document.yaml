@@ -6,6 +6,7 @@ info:
   
 tags:
   - name: user
+  - name: auth
 
 paths:
   /:
@@ -404,7 +405,7 @@ paths:
   /signin:
     post:
       tags:
-        - user
+        - auth
       description: |
         ログイン用のエンドポイント
 
@@ -472,7 +473,7 @@ paths:
   /signout:
     delete:
       tags:
-        - user
+        - auth
       description: |
         ログアウト用のエンドポイント
 

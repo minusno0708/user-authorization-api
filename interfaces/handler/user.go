@@ -16,8 +16,6 @@ type UserHandler interface {
 	HandleUserPut(c *gin.Context)
 	HandleUserDelete(c *gin.Context)
 
-	HandleSignin(c *gin.Context)
-	HandleSignout(c *gin.Context)
 	HandleUser(c *gin.Context)
 }
 
@@ -278,86 +276,6 @@ func (uh userHandler) HandleUserDelete(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User can be deleted",
-	})
-}
-
-func (uh userHandler) HandleSignin(c *gin.Context) {
-	var requestBody struct {
-		UserID   string `json:"user_id"`
-		Password string `json:"password"`
-	}
-
-	if err := c.ShouldBindJSON(&requestBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Body does not exist",
-		})
-		return
-	}
-	if requestBody.UserID == "" || requestBody.Password == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Body is not valid",
-		})
-		return
-	}
-
-	db, err := config.ConnectDB()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Database connection error",
-		})
-		return
-	}
-	defer db.Close()
-
-	user, err := uh.userUseCase.FindUserByUserID(db, requestBody.UserID)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "User ID or password is incorrect",
-		})
-		return
-	}
-
-	if user.Password != requestBody.Password {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "User ID or password is incorrect",
-		})
-		return
-	}
-
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "Token can be acquired",
-	})
-}
-
-func (uh userHandler) HandleSignout(c *gin.Context) {
-	var requestBody struct {
-		Token string `json:"token"`
-	}
-
-	if err := c.ShouldBindJSON(&requestBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Body does not exist",
-		})
-		return
-	}
-	if requestBody.Token == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Body is not valid",
-		})
-		return
-	}
-
-	db, err := config.ConnectDB()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Database connection error",
-		})
-		return
-	}
-	defer db.Close()
-
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "Token can be deleted",
 	})
 }
 

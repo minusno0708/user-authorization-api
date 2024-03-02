@@ -13,6 +13,8 @@ func main() {
 	userUseCase := usecase.NewUserUseCase(userPersistence)
 	userHandler := handler.NewUserHandler(userUseCase)
 
+	authHandler := handler.NewAuthHandler(userUseCase)
+
 	r := gin.Default()
 	r.GET("/", userHandler.HandleConnectionAPI)
 	r.POST("/signup", userHandler.HandleUserSignup)
@@ -20,9 +22,10 @@ func main() {
 	r.PUT("/user/:user_id", userHandler.HandleUserPut)
 	r.DELETE("/user/:user_id", userHandler.HandleUserDelete)
 
-	r.POST("/signin", userHandler.HandleSignin)
-	r.DELETE("/signout", userHandler.HandleSignout)
 	r.GET("/account", userHandler.HandleUser)
+
+	r.POST("/signin", authHandler.HandleSignin)
+	r.DELETE("/signout", authHandler.HandleSignout)
 
 	r.Run(":8080")
 }
