@@ -101,3 +101,26 @@ func TestDeleteUser(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestGenerateToken(t *testing.T) {
+	tokenPersistence := persistence.NewTokenPersistence()
+
+	exampleToken := "eyJhbG"
+	err := tokenPersistence.GenerateToken(testUser.UserID, exampleToken)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestValidateToken(t *testing.T) {
+	tokenPersistence := persistence.NewTokenPersistence()
+
+	exampleToken := "eyJhbG"
+	userID, err := tokenPersistence.ValidateToken(exampleToken)
+	if err != nil {
+		t.Error(err)
+	}
+	if userID != testUser.UserID {
+		t.Errorf("UserID is not match")
+	}
+}
