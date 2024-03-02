@@ -465,21 +465,10 @@ paths:
                   value:
                     message: Body is not valid
                 response2:
-                  summary: パスワードが正しくない場合
+                  summary: ユーザーIDまたはパスワードが正しくない場合
                   value:
-                    message: Password is incorrect
-        404:
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/UserNotFoundError'
-              examples:
-                response1:
-                  summary: 存在しないユーザーIDの場合
-                  value:
-                    message: User not found
+                    message: User ID or password is incorrect
+        
   /signout:
     delete:
       tags:
@@ -530,7 +519,7 @@ paths:
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/BodyValidationError'
-                  - $ref: '#/components/schemas/FailedAuthenticateError'
+                  - $ref: '#/components/schemas/UserOrPassIncorrectError'
               examples:
                 response1:
                   summary: Bodyの形式が正しくない場合
@@ -645,3 +634,12 @@ components:
             message:
               type: string
               example: "Failed to authenticate"
+    UserOrPassIncorrectError:
+      type: object
+      properties:
+        id_or_pass_incorrect:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "User ID or password is incorrect"
