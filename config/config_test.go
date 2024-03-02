@@ -11,3 +11,10 @@ func TestConnectionDB(t *testing.T) {
 	}
 	defer db.Close()
 }
+
+func TestConnectionCacheDB(t *testing.T) {
+	_, err := ConnectCacheDB()
+	if err != nil {
+		t.Fatalf("Error connecting to the database: %v", err)
+	}
+}
