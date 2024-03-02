@@ -309,6 +309,21 @@ func (uh userHandler) HandleSignin(c *gin.Context) {
 	}
 	defer db.Close()
 
+	user, err := uh.userUseCase.FindUserByUserID(db, requestBody.UserID)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": "User ID or password is incorrect",
+		})
+		return
+	}
+
+	if user.Password != requestBody.Password {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": "User ID or password is incorrect",
+		})
+		return
+	}
+
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Token can be acquired",
 	})
