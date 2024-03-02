@@ -9,7 +9,7 @@ services:
     tty: true
     depends_on:
       - db
-      - redis
+      - cache
     ports:
       - 8080:8080
 
@@ -24,9 +24,9 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
 
-  redis:
+  cache:
     build:
-      context: build/redis
+      context: build/cache
       dockerfile: Dockerfile
     ports:
       - 6379:6379
