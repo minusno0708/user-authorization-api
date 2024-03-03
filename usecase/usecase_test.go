@@ -93,3 +93,15 @@ func TestValidateToken(t *testing.T) {
 		t.Errorf("UserID is not correct")
 	}
 }
+
+func TestValidateInvalidToken(t *testing.T) {
+	tokenPersistence := persistence.NewTokenPersistence()
+	tokenUseCase := NewTokenUseCase(tokenPersistence)
+
+	token := "invalid_token"
+
+	_, err := tokenUseCase.ValidateToken(token)
+	if err == nil {
+		t.Errorf("Invalid token is validated")
+	}
+}
