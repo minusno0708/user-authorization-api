@@ -14,12 +14,14 @@ type AuthHandler interface {
 }
 
 type authHandler struct {
-	userUseCase usecase.UserUseCase
+	userUseCase  usecase.UserUseCase
+	tokenUseCase usecase.TokenUseCase
 }
 
-func NewAuthHandler(uu usecase.UserUseCase) AuthHandler {
+func NewAuthHandler(uu usecase.UserUseCase, tu usecase.TokenUseCase) AuthHandler {
 	return &authHandler{
-		userUseCase: uu,
+		userUseCase:  uu,
+		tokenUseCase: tu,
 	}
 }
 
@@ -68,8 +70,11 @@ func (ah authHandler) HandleSignin(c *gin.Context) {
 	}
 	*/
 
+	token, err := ah.tokenUseCase.GenerateToken(requestBody.UserID)
+
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Token can be acquired",
+		"token":   token,
 	})
 }
 

@@ -13,7 +13,9 @@ func main() {
 	userUseCase := usecase.NewUserUseCase(userPersistence)
 	userHandler := handler.NewUserHandler(userUseCase)
 
-	authHandler := handler.NewAuthHandler(userUseCase)
+	tokenPersistence := persistence.NewTokenPersistence()
+	tokenUseCase := usecase.NewTokenUseCase(tokenPersistence)
+	authHandler := handler.NewAuthHandler(userUseCase, tokenUseCase)
 
 	r := gin.Default()
 	r.GET("/", userHandler.HandleConnectionAPI)
