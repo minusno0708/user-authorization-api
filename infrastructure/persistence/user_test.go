@@ -1,11 +1,10 @@
-package infrastructure
+package persistence
 
 import (
 	"testing"
 
 	"user-register-api/config"
 	"user-register-api/domain"
-	"user-register-api/infrastructure/persistence"
 )
 
 var testUser = domain.User{
@@ -20,7 +19,7 @@ func TestInsertUser(t *testing.T) {
 		t.Error(err)
 	}
 	defer db.Close()
-	userPersistence := persistence.NewUserPersistence()
+	userPersistence := NewUserPersistence()
 
 	err = userPersistence.InsertUser(db, testUser.UserID, testUser.Username, testUser.Password)
 	if err != nil {
@@ -34,7 +33,7 @@ func TestInsertUserDuplicate(t *testing.T) {
 		t.Error(err)
 	}
 	defer db.Close()
-	userPersistence := persistence.NewUserPersistence()
+	userPersistence := NewUserPersistence()
 
 	err = userPersistence.InsertUser(db, testUser.UserID, testUser.Username, testUser.Password)
 	if err == nil {
@@ -48,7 +47,7 @@ func TestFindUserByUserID(t *testing.T) {
 		t.Error(err)
 	}
 	defer db.Close()
-	userPersistence := persistence.NewUserPersistence()
+	userPersistence := NewUserPersistence()
 
 	user, err := userPersistence.FindUserByUserID(db, testUser.UserID)
 	if err != nil {
@@ -71,7 +70,7 @@ func TestUpdateUsername(t *testing.T) {
 		t.Error(err)
 	}
 	defer db.Close()
-	userPersistence := persistence.NewUserPersistence()
+	userPersistence := NewUserPersistence()
 
 	updatedName := "testuser_db_updated"
 	err = userPersistence.UpdateUsername(db, testUser.UserID, updatedName)
@@ -94,33 +93,10 @@ func TestDeleteUser(t *testing.T) {
 		t.Error(err)
 	}
 	defer db.Close()
-	userPersistence := persistence.NewUserPersistence()
+	userPersistence := NewUserPersistence()
 
 	err = userPersistence.DeleteUser(db, testUser.UserID)
 	if err != nil {
 		t.Error(err)
-	}
-}
-
-func TestGenerateToken(t *testing.T) {
-	tokenPersistence := persistence.NewTokenPersistence()
-
-	exampleToken := "eyJhbG"
-	err := tokenPersistence.GenerateToken(testUser.UserID, exampleToken)
-	if err != nil {
-		t.Error(err)
-	}
-}
-
-func TestValidateToken(t *testing.T) {
-	tokenPersistence := persistence.NewTokenPersistence()
-
-	exampleToken := "eyJhbG"
-	userID, err := tokenPersistence.ValidateToken(exampleToken)
-	if err != nil {
-		t.Error(err)
-	}
-	if userID != testUser.UserID {
-		t.Errorf("UserID is not match")
 	}
 }
