@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"time"
 	"user-register-api/domain/repository"
 
@@ -10,7 +11,7 @@ import (
 
 type TokenUseCase interface {
 	GenerateToken(userID string) (string, error)
-	ValidateToken(token string) (string, error)
+	ValidateToken(tokenString string) (string, error)
 }
 
 type tokenUseCase struct {
@@ -43,10 +44,18 @@ func (au tokenUseCase) GenerateToken(userID string) (string, error) {
 	return tokenString, nil
 }
 
-func (au tokenUseCase) ValidateToken(token string) (string, error) {
-	userID, err := au.tokenRepository.ValidateToken(token)
+func (au tokenUseCase) ValidateToken(tokenString string) (string, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("invalid token")
+		}
+		return []byte("secret"), nil
+	})
 	if err != nil {
 		return "", err
 	}
+
+	userID := token.Claims.(jwt.MapClaims)["user_id"].(string)
+
 	return userID, nil
 }
