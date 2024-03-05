@@ -21,7 +21,7 @@ func (tp tokenPersistence) GenerateToken(userID, token string) error {
 		return err
 	}
 
-	err = cdb.Set(ctx, token, userID, 0).Err()
+	err = cdb.Set(ctx, userID, token, 0).Err()
 	if err != nil {
 		return err
 	}
