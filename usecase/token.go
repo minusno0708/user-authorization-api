@@ -56,6 +56,14 @@ func (au tokenUseCase) ValidateToken(tokenString string) (string, error) {
 	}
 
 	userID := token.Claims.(jwt.MapClaims)["user_id"].(string)
+	tokenUuid, err := au.tokenRepository.ValidateToken(userID)
+	if err != nil {
+		return "", err
+	}
+
+	if tokenUuid != token.Claims.(jwt.MapClaims)["uuid"].(string) {
+		return "", errors.New("invalid token")
+	}
 
 	return userID, nil
 }
