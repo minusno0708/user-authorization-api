@@ -2,5 +2,5 @@ package repository
 
 type TokenRepository interface {
 	GenerateToken(userID, token string) error
-	ValidateToken(token string) (string, error)
+	ValidateToken(userID string) (string, error)
 }

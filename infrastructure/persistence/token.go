@@ -29,7 +29,7 @@ func (tp tokenPersistence) GenerateToken(userID, token string) error {
 	return nil
 }
 
-func (tp tokenPersistence) ValidateToken(token string) (string, error) {
+func (tp tokenPersistence) ValidateToken(userID string) (string, error) {
 	ctx := context.Background()
 
 	cdb, err := config.ConnectCacheDB()
@@ -37,10 +37,10 @@ func (tp tokenPersistence) ValidateToken(token string) (string, error) {
 		return "", err
 	}
 
-	userID, err := cdb.Get(ctx, token).Result()
+	token, err := cdb.Get(ctx, userID).Result()
 	if err != nil {
 		return "", err
 	}
 
-	return userID, nil
+	return token, nil
 }

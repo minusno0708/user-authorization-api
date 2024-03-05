@@ -14,13 +14,13 @@ func TestGenerateToken(t *testing.T) {
 
 func TestValidateToken(t *testing.T) {
 	tokenPersistence := NewTokenPersistence()
-
 	exampleToken := "eyJhbG"
-	userID, err := tokenPersistence.ValidateToken(exampleToken)
+
+	token, err := tokenPersistence.ValidateToken(testUser.UserID)
 	if err != nil {
 		t.Error(err)
 	}
-	if userID != testUser.UserID {
-		t.Errorf("UserID is not match")
+	if token != exampleToken {
+		t.Errorf("Token is not match")
 	}
 }
