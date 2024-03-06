@@ -25,6 +25,21 @@ func NewTokenUseCase(tr repository.TokenRepository) TokenUseCase {
 	}
 }
 
+var secretKey = "secret"
+
+func tokenParse(tokenString string) (*jwt.Token, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("invalid token")
+		}
+		return []byte(secretKey), nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return token, nil
+}
+
 func (tu tokenUseCase) GenerateToken(userID string) (string, error) {
 	claims := jwt.MapClaims{
 		"user_id": userID,
@@ -33,7 +48,7 @@ func (tu tokenUseCase) GenerateToken(userID string) (string, error) {
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	tokenString, err := token.SignedString([]byte("secret"))
+	tokenString, err := token.SignedString([]byte(secretKey))
 	if err != nil {
 		return "", err
 	}
@@ -46,12 +61,7 @@ func (tu tokenUseCase) GenerateToken(userID string) (string, error) {
 }
 
 func (tu tokenUseCase) ValidateToken(tokenString string) (string, error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("invalid token")
-		}
-		return []byte("secret"), nil
-	})
+	token, err := tokenParse(tokenString)
 	if err != nil {
 		return "", err
 	}
@@ -70,12 +80,7 @@ func (tu tokenUseCase) ValidateToken(tokenString string) (string, error) {
 }
 
 func (tu tokenUseCase) DeleteToken(tokenString string) error {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("invalid token")
-		}
-		return []byte("secret"), nil
-	})
+	token, err := tokenParse(tokenString)
 	if err != nil {
 		return err
 	}
