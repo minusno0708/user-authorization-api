@@ -2,6 +2,7 @@ package persistence
 
 import (
 	"context"
+	"time"
 	"user-register-api/config"
 
 	"user-register-api/domain/repository"
@@ -21,7 +22,7 @@ func (tp tokenPersistence) GenerateToken(userID, tokenUuid string) error {
 		return err
 	}
 
-	err = cdb.Set(ctx, userID, tokenUuid, 0).Err()
+	err = cdb.Set(ctx, userID, tokenUuid, time.Hour).Err()
 	if err != nil {
 		return err
 	}
@@ -38,6 +39,11 @@ func (tp tokenPersistence) ValidateToken(userID string) (string, error) {
 	}
 
 	tokenUuid, err := cdb.Get(ctx, userID).Result()
+	if err != nil {
+		return "", err
+	}
+
+	err = cdb.Expire(ctx, userID, time.Hour).Err()
 	if err != nil {
 		return "", err
 	}
