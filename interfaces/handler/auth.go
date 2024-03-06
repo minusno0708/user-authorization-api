@@ -71,6 +71,12 @@ func (ah authHandler) HandleSignin(c *gin.Context) {
 	*/
 
 	token, err := ah.tokenUseCase.GenerateToken(requestBody.UserID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Token can not be generated",
+		})
+		return
+	}
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Token can be acquired",
@@ -96,14 +102,13 @@ func (ah authHandler) HandleSignout(c *gin.Context) {
 		return
 	}
 
-	db, err := config.ConnectDB()
+	err := ah.tokenUseCase.DeleteToken(requestBody.Token)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Database connection error",
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Failed to authenticate",
 		})
 		return
 	}
-	defer db.Close()
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Token can be deleted",

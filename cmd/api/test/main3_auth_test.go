@@ -9,6 +9,8 @@ import (
 	"user-register-api/domain"
 )
 
+var accessToken string
+
 func TestSigninBodyNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusBadRequest
 	expectedMessage := "Body does not exist"
@@ -114,6 +116,8 @@ func TestSigninSuccess(t *testing.T) {
 	if response.Token == "" {
 		t.Fatal("Token is empty")
 	}
+
+	accessToken = response.Token
 }
 
 func TestSignoutBodyNotExist(t *testing.T) {
@@ -135,7 +139,54 @@ func TestSignoutTokenNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Body is not valid"
 
-	requestBody := &domain.User{}
+	requestBody := &domain.Token{}
+
+	jsonString, err := json.Marshal(requestBody)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err := sendRequest("DELETE", endpoint+"/signout", bytes.NewBuffer(jsonString))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSignoutIncorrectToken(t *testing.T) {
+	expectedStatusCode := http.StatusUnauthorized
+	expectedMessage := "Failed to authenticate"
+
+	requestBody := &domain.Token{
+		Token: "incorrect_token",
+	}
+	jsonString, err := json.Marshal(requestBody)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err := sendRequest("DELETE", endpoint+"/signout", bytes.NewBuffer(jsonString))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSignoutSuccess(t *testing.T) {
+	expectedStatusCode := http.StatusCreated
+	expectedMessage := "Token can be deleted"
+
+	requestBody := &domain.Token{
+		Token: accessToken,
+	}
 
 	jsonString, err := json.Marshal(requestBody)
 	if err != nil {
