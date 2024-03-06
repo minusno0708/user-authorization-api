@@ -12,6 +12,7 @@ import (
 type TokenUseCase interface {
 	GenerateToken(userID string) (string, error)
 	ValidateToken(tokenString string) (string, error)
+	DeleteToken(tokenString string) error
 }
 
 type tokenUseCase struct {
@@ -24,7 +25,7 @@ func NewTokenUseCase(tr repository.TokenRepository) TokenUseCase {
 	}
 }
 
-func (au tokenUseCase) GenerateToken(userID string) (string, error) {
+func (tu tokenUseCase) GenerateToken(userID string) (string, error) {
 	claims := jwt.MapClaims{
 		"user_id": userID,
 		"uuid":    uuid.New().String(),
@@ -37,14 +38,14 @@ func (au tokenUseCase) GenerateToken(userID string) (string, error) {
 		return "", err
 	}
 
-	err = au.tokenRepository.GenerateToken(userID, claims["uuid"].(string))
+	err = tu.tokenRepository.GenerateToken(userID, claims["uuid"].(string))
 	if err != nil {
 		return "", err
 	}
 	return tokenString, nil
 }
 
-func (au tokenUseCase) ValidateToken(tokenString string) (string, error) {
+func (tu tokenUseCase) ValidateToken(tokenString string) (string, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid token")
@@ -56,7 +57,7 @@ func (au tokenUseCase) ValidateToken(tokenString string) (string, error) {
 	}
 
 	userID := token.Claims.(jwt.MapClaims)["user_id"].(string)
-	tokenUuid, err := au.tokenRepository.ValidateToken(userID)
+	tokenUuid, err := tu.tokenRepository.ValidateToken(userID)
 	if err != nil {
 		return "", err
 	}
@@ -66,4 +67,21 @@ func (au tokenUseCase) ValidateToken(tokenString string) (string, error) {
 	}
 
 	return userID, nil
+}
+
+func (tu tokenUseCase) DeleteToken(tokenString string) error {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("invalid token")
+		}
+		return []byte("secret"), nil
+	})
+	if err != nil {
+		return err
+	}
+
+	userID := token.Claims.(jwt.MapClaims)["user_id"].(string)
+	err = tu.tokenRepository.DeleteToken(userID)
+
+	return err
 }

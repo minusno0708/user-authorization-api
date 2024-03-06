@@ -44,3 +44,23 @@ func TestUsecaseValidateInvalidToken(t *testing.T) {
 		t.Errorf("Invalid token is accepted")
 	}
 }
+
+func TestUsecaseDeleteToken(t *testing.T) {
+	tokenPersistence := persistence.NewTokenPersistence()
+	tokenUseCase := NewTokenUseCase(tokenPersistence)
+
+	token, err := tokenUseCase.GenerateToken(testUser.UserID)
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = tokenUseCase.DeleteToken(token)
+	if err != nil {
+		t.Error(err)
+	}
+
+	_, err = tokenUseCase.ValidateToken(token)
+	if err == nil {
+		t.Errorf("Token is not deleted")
+	}
+}
