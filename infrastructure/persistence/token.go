@@ -44,3 +44,19 @@ func (tp tokenPersistence) ValidateToken(userID string) (string, error) {
 
 	return tokenUuid, nil
 }
+
+func (tp tokenPersistence) DeleteToken(userID string) error {
+	ctx := context.Background()
+
+	cdb, err := config.ConnectCacheDB()
+	if err != nil {
+		return err
+	}
+
+	err = cdb.Del(ctx, userID).Err()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

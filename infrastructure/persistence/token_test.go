@@ -24,3 +24,21 @@ func TestValidateToken(t *testing.T) {
 		t.Errorf("UUID is not match")
 	}
 }
+
+func TestDeleteToken(t *testing.T) {
+	tokenPersistence := NewTokenPersistence()
+
+	err := tokenPersistence.DeleteToken(testUser.UserID)
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestValidateTokenDeleted(t *testing.T) {
+	tokenPersistence := NewTokenPersistence()
+
+	_, err := tokenPersistence.ValidateToken(testUser.UserID)
+	if err == nil {
+		t.Error("Token is not deleted")
+	}
+}
