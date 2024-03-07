@@ -28,7 +28,7 @@ func TestSignupUserIDNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Body is not valid"
 
-	requestBody := &domain.User{
+	requestBody := requestBody{
 		Username: "testuser",
 		Password: "testpass",
 	}
@@ -53,7 +53,7 @@ func TestSignupPasswordNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Body is not valid"
 
-	requestBody := &domain.User{
+	requestBody := requestBody{
 		UserID:   "testuser",
 		Username: "testuser",
 	}
@@ -78,7 +78,7 @@ func TestSignupSuccessUsernameExist(t *testing.T) {
 	expectedStatusCode := http.StatusCreated
 	expectedMessage := "User created successfully"
 
-	requestBody := &domain.User{
+	requestBody := requestBody{
 		UserID:   "testuser",
 		Username: "testname",
 		Password: "testpass",
@@ -109,7 +109,7 @@ func TestSignupSuccessUsernameNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusCreated
 	expectedMessage := "User created successfully"
 
-	requestBody := &domain.User{
+	requestBody := requestBody{
 		UserID:   "testuser_name_not_exist",
 		Password: "testpass",
 	}
@@ -139,7 +139,7 @@ func TestSignupUserConflict(t *testing.T) {
 	expectedStatusCode := http.StatusConflict
 	expectedMessage := "User already exists"
 
-	requestBody := &domain.User{
+	requestBody := requestBody{
 		UserID:   "testuser",
 		Username: "testname",
 		Password: "testpass",
