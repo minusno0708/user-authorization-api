@@ -28,8 +28,13 @@ func (uu userUseCase) InsertUser(db *sql.DB, userID, username, password string) 
 	if username == "" {
 		username = userID
 	}
-	
-	err := uu.userRepository.InsertUser(db, userID, username, password)
+
+	hashPassword, err := domain.NewPassword(password).ToHash()
+	if err != nil {
+		return nil, err
+	}
+
+	err = uu.userRepository.InsertUser(db, userID, username, hashPassword)
 	if err != nil {
 		return nil, err
 	}

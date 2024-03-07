@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"user-register-api/config"
+	"user-register-api/domain"
 	"user-register-api/usecase"
 
 	"github.com/gin-gonic/gin"
@@ -61,7 +62,16 @@ func (ah authHandler) HandleSignin(c *gin.Context) {
 		return
 	}
 
-	if user.Password != requestBody.Password {
+	password := domain.NewPassword(requestBody.Password)
+	match, err := password.IsMatch(user.Password)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Password matching error",
+		})
+		return
+	}
+
+	if !match {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "User ID or password is incorrect",
 		})
