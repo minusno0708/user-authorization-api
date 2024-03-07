@@ -4,10 +4,10 @@ import "testing"
 
 var exampleUuid = "de5fe5d7-eec2-4fba-e071-fa2de7c1e440"
 
-func TestGenerateToken(t *testing.T) {
+func TestSaveToken(t *testing.T) {
 	tokenPersistence := NewTokenPersistence()
 
-	err := tokenPersistence.GenerateToken(testUser.UserID, exampleUuid)
+	err := tokenPersistence.SaveToken(testUser.UserID, exampleUuid)
 	if err != nil {
 		t.Error(err)
 	}

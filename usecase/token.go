@@ -53,7 +53,7 @@ func (tu tokenUseCase) GenerateToken(userID string) (string, error) {
 		return "", err
 	}
 
-	err = tu.tokenRepository.GenerateToken(userID, claims["uuid"].(string))
+	err = tu.tokenRepository.SaveToken(userID, claims["uuid"].(string))
 	if err != nil {
 		return "", err
 	}
@@ -87,6 +87,9 @@ func (tu tokenUseCase) DeleteToken(tokenString string) error {
 
 	userID := token.Claims.(jwt.MapClaims)["user_id"].(string)
 	err = tu.tokenRepository.DeleteToken(userID)
+	if err != nil {
+		return err
+	}
 
 	return err
 }

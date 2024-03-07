@@ -14,7 +14,7 @@ func NewTokenPersistence() repository.TokenRepository {
 	return &tokenPersistence{}
 }
 
-func (tp tokenPersistence) GenerateToken(userID, tokenUuid string) error {
+func (tp tokenPersistence) SaveToken(userID, tokenUuid string) error {
 	ctx := context.Background()
 
 	cdb, err := config.ConnectCacheDB()
