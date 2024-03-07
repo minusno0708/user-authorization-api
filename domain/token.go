@@ -49,3 +49,7 @@ func ParseToken(tokenString string) (*Token, error) {
 func (t *Token) UUID() string {
 	return t.value.Claims.(jwt.MapClaims)["uuid"].(string)
 }
+
+func (t *Token) UserID() string {
+	return t.value.Claims.(jwt.MapClaims)["user_id"].(string)
+}
