@@ -140,7 +140,7 @@ func (uh userHandler) HandleUserGet(c *gin.Context) {
 
 func (uh userHandler) HandleUserPut(c *gin.Context) {
 	var requestBody struct {
-		Username    string `json:"username"`
+		NewUsername string `json:"username"`
 		TokenString string `json:"token"`
 	}
 
@@ -151,7 +151,7 @@ func (uh userHandler) HandleUserPut(c *gin.Context) {
 		return
 	}
 
-	if requestBody.TokenString == "" || requestBody.Username == "" {
+	if requestBody.TokenString == "" || requestBody.NewUsername == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Body is not valid",
 		})
@@ -175,7 +175,7 @@ func (uh userHandler) HandleUserPut(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, err := uh.userUseCase.UpdateUsername(db, userID, requestBody.Username)
+	user, err := uh.userUseCase.UpdateUsername(db, userID, requestBody.NewUsername)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "User can not be updated",
