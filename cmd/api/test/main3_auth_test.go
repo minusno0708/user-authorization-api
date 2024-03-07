@@ -254,6 +254,30 @@ func TestSignoutSuccess(t *testing.T) {
 	}
 }
 
+func TestCanDeletedToken(t *testing.T) {
+	expectedStatusCode := http.StatusUnauthorized
+	expectedMessage := "Failed to authenticate"
+
+	requestBody := &domain.Token{
+		TokenString: accessToken,
+	}
+
+	jsonString, err := json.Marshal(requestBody)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err := sendRequest("DELETE", endpoint+"/signout", bytes.NewBuffer(jsonString))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestGetAccessToken(t *testing.T) {
 	requestBody := &domain.User{
 		UserID:   "testuser",

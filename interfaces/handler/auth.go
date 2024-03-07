@@ -100,10 +100,18 @@ func (ah authHandler) HandleSignout(c *gin.Context) {
 		return
 	}
 
-	err := ah.tokenUseCase.DeleteToken(requestBody.TokenString)
+	_, err := ah.tokenUseCase.ValidateToken(requestBody.TokenString)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Failed to authenticate",
+		})
+		return
+	}
+
+	err = ah.tokenUseCase.DeleteToken(requestBody.TokenString)
+	if err != nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{
+			"message": "Token can not be deleted",
 		})
 		return
 	}
