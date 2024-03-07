@@ -18,10 +18,10 @@ func (pwd *Password) ToHash() (string, error) {
 	return string(hash), nil
 }
 
-func (pwd *Password) IsMatch(hashPwd string) (bool, error) {
+func (pwd *Password) Compare(hashPwd string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hashPwd), []byte(pwd.value))
 	if err != nil {
-		return false, err
+		return err
 	}
-	return true, nil
+	return nil
 }
