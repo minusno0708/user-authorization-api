@@ -24,8 +24,6 @@ func main() {
 	r.PUT("/user/:user_id", userHandler.HandleUserPut)
 	r.DELETE("/user/:user_id", userHandler.HandleUserDelete)
 
-	r.GET("/account", userHandler.HandleUser)
-
 	r.POST("/signin", authHandler.HandleSignin)
 	r.DELETE("/signout", authHandler.HandleSignout)
 
