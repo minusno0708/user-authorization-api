@@ -231,7 +231,7 @@ func TestSignoutIncorrectToken(t *testing.T) {
 }
 
 func TestSignoutSuccess(t *testing.T) {
-	expectedStatusCode := http.StatusCreated
+	expectedStatusCode := http.StatusOK
 	expectedMessage := "Token can be deleted"
 
 	requestBody := &domain.Token{

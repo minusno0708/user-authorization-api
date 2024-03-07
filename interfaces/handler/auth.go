@@ -108,7 +108,7 @@ func (ah authHandler) HandleSignout(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"message": "Token can be deleted",
 	})
 }
