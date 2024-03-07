@@ -17,3 +17,11 @@ func (pwd *Password) ToHash() (string, error) {
 	}
 	return string(hash), nil
 }
+
+func (pwd *Password) IsMatch(hashPwd string) (bool, error) {
+	err := bcrypt.CompareHashAndPassword([]byte(hashPwd), []byte(pwd.value))
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
