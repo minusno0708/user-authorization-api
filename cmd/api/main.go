@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 
 	"user-register-api/infrastructure/persistence"
@@ -19,7 +21,12 @@ func main() {
 	authHandler := handler.NewAuthHandler(userUseCase, tokenUseCase)
 
 	r := gin.Default()
-	r.GET("/", userHandler.HandleConnectionAPI)
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Connection Successful",
+		})
+	})
+
 	r.POST("/signup", userHandler.HandleUserSignup)
 	r.GET("/user", userHandler.HandleUserGet)
 	r.PUT("/user", userHandler.HandleUserPut)

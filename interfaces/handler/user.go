@@ -10,7 +10,6 @@ import (
 )
 
 type UserHandler interface {
-	HandleConnectionAPI(c *gin.Context)
 	HandleUserSignup(c *gin.Context)
 	HandleUserGet(c *gin.Context)
 	HandleUserPut(c *gin.Context)
@@ -32,12 +31,6 @@ func NewUserHandler(uu usecase.UserUseCase, tu usecase.TokenUseCase) UserHandler
 type responseUser struct {
 	UserID   string `json:"user_id"`
 	Username string `json:"username"`
-}
-
-func (uh userHandler) HandleConnectionAPI(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Connection Successful",
-	})
 }
 
 func (uh userHandler) HandleUserSignup(c *gin.Context) {
