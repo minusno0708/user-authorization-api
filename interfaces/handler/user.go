@@ -15,12 +15,11 @@ type UserHandler interface {
 	HandleUserGet(c *gin.Context)
 	HandleUserPut(c *gin.Context)
 	HandleUserDelete(c *gin.Context)
-
-	HandleUser(c *gin.Context)
 }
 
 type userHandler struct {
-	userUseCase usecase.UserUseCase
+	userUseCase  usecase.UserUseCase
+	tokenUseCase usecase.TokenUseCase
 }
 
 func NewUserHandler(uu usecase.UserUseCase) UserHandler {
@@ -87,16 +86,8 @@ func (uh userHandler) HandleUserSignup(c *gin.Context) {
 }
 
 func (uh userHandler) HandleUserGet(c *gin.Context) {
-	userID := c.Param("user_id")
-	if userID == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"message": "404 page not found",
-		})
-		return
-	}
-
 	var requestBody struct {
-		Password string `json:"password"`
+		TokenString string `json:"token"`
 	}
 
 	if err := c.ShouldBindJSON(&requestBody); err != nil {
@@ -106,9 +97,17 @@ func (uh userHandler) HandleUserGet(c *gin.Context) {
 		return
 	}
 
-	if requestBody.Password == "" {
+	if requestBody.TokenString == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Body is not valid",
+		})
+		return
+	}
+
+	userID, err := uh.tokenUseCase.ValidateToken(requestBody.TokenString)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Failed to authenticate",
 		})
 		return
 	}
@@ -124,15 +123,8 @@ func (uh userHandler) HandleUserGet(c *gin.Context) {
 
 	user, err := uh.userUseCase.FindUserByUserID(db, userID)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "User not found",
-		})
-		return
-	}
-
-	if user.Password != requestBody.Password {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Password is incorrect",
 		})
 		return
 	}
@@ -140,24 +132,16 @@ func (uh userHandler) HandleUserGet(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User can be acquired",
 		"user": &responseUser{
-			UserID:   "testuser",
-			Username: "testname",
+			UserID:   user.UserID,
+			Username: user.Username,
 		},
 	})
 }
 
 func (uh userHandler) HandleUserPut(c *gin.Context) {
-	userID := c.Param("user_id")
-	if userID == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"message": "404 page not found",
-		})
-		return
-	}
-
 	var requestBody struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
+		Username    string `json:"username"`
+		TokenString string `json:"token"`
 	}
 
 	if err := c.ShouldBindJSON(&requestBody); err != nil {
@@ -167,9 +151,17 @@ func (uh userHandler) HandleUserPut(c *gin.Context) {
 		return
 	}
 
-	if requestBody.Password == "" || requestBody.Username == "" {
+	if requestBody.TokenString == "" || requestBody.Username == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Body is not valid",
+		})
+		return
+	}
+
+	userID, err := uh.tokenUseCase.ValidateToken(requestBody.TokenString)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Failed to authenticate",
 		})
 		return
 	}
@@ -183,22 +175,7 @@ func (uh userHandler) HandleUserPut(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, err := uh.userUseCase.FindUserByUserID(db, userID)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"message": "User not found",
-		})
-		return
-	}
-
-	if user.Password != requestBody.Password {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Password is incorrect",
-		})
-		return
-	}
-
-	user, err = uh.userUseCase.UpdateUsername(db, userID, requestBody.Username)
+	user, err := uh.userUseCase.UpdateUsername(db, userID, requestBody.Username)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "User can not be updated",
@@ -216,16 +193,8 @@ func (uh userHandler) HandleUserPut(c *gin.Context) {
 }
 
 func (uh userHandler) HandleUserDelete(c *gin.Context) {
-	userID := c.Param("user_id")
-	if userID == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"message": "404 page not found",
-		})
-		return
-	}
-
 	var requestBody struct {
-		Password string `json:"password"`
+		TokenString string `json:"token"`
 	}
 
 	if err := c.ShouldBindJSON(&requestBody); err != nil {
@@ -235,9 +204,17 @@ func (uh userHandler) HandleUserDelete(c *gin.Context) {
 		return
 	}
 
-	if requestBody.Password == "" {
+	if requestBody.TokenString == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Body is not valid",
+		})
+		return
+	}
+
+	userID, err := uh.tokenUseCase.ValidateToken(requestBody.TokenString)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Failed to authenticate",
 		})
 		return
 	}
@@ -251,21 +228,6 @@ func (uh userHandler) HandleUserDelete(c *gin.Context) {
 	}
 	defer db.Close()
 
-	user, err := uh.userUseCase.FindUserByUserID(db, userID)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"message": "User not found",
-		})
-		return
-	}
-
-	if user.Password != requestBody.Password {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Password is incorrect",
-		})
-		return
-	}
-
 	err = uh.userUseCase.DeleteUser(db, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -276,15 +238,5 @@ func (uh userHandler) HandleUserDelete(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User can be deleted",
-	})
-}
-
-func (uh userHandler) HandleUser(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "User can be acquired",
-		"user": &responseUser{
-			UserID:   "testuser",
-			Username: "testname",
-		},
 	})
 }
