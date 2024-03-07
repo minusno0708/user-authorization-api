@@ -63,15 +63,8 @@ func (ah authHandler) HandleSignin(c *gin.Context) {
 	}
 
 	password := domain.NewPassword(requestBody.Password)
-	match, err := password.IsMatch(user.Password)
+	err = password.Compare(user.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Password matching error",
-		})
-		return
-	}
-
-	if !match {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "User ID or password is incorrect",
 		})
