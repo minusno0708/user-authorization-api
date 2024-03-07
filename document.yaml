@@ -6,6 +6,7 @@ info:
   
 tags:
   - name: user
+  - name: auth
 
 paths:
   /:
@@ -25,7 +26,7 @@ paths:
                     type: string
                     example: "Connect successfully"
 
-  /signin:
+  /signup:
     post:
       tags:
         - user
@@ -119,34 +120,25 @@ paths:
                     message: Database connection error
 
 
-  /user/{user_id}: 
+  /user: 
     get:
       tags:
         - user
       description: |
         ユーザー情報を取得する
-
-      parameters:
-        - name: "user_id"
-          in: "path"
-          description: "ユーザーID"
-          required: true
-          schema:
-            type: "string"
-
       requestBody:
-        description: パスワード
+        description: アクセストークン
         required: true
         content:
           application/json:
             schema:
               type: object
               required:
-                - password
+                - token
               properties:
-                password:
+                token:
                   type: "string"
-                  example: "password"
+                  example: "xxxxxxxxxxxxxxxxxxxxxxxx"
 
       responses:
         200:
@@ -186,28 +178,16 @@ paths:
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/BodyValidationError'
-                  - $ref: '#/components/schemas/PassIncorrectError'
+                  - $ref: '#/components/schemas/FailedAuthenticateError'
               examples:
                 response1:
                   summary: Bodyの形式が正しくない場合
                   value:
                     message: Body is not valid
                 response2:
-                  summary: パスワードが正しくない場合
+                  summary: 認証に失敗した場合
                   value:
-                    message: Password is incorrect
-        404:
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/UserNotFoundError'
-              examples:
-                response1:
-                  summary: 存在しないユーザーIDの場合
-                  value:
-                    message: User not found
+                    message: Failed to authenticate
         500:
           description: Internal Server Error
           content:
@@ -225,17 +205,8 @@ paths:
         - user
       description: |
         ユーザー情報を更新する
-
-      parameters:
-        - name: "user_id"
-          in: "path"
-          description: "ユーザーID"
-          required: true
-          schema:
-            type: "string"
-
       requestBody:
-        description: ユーザー情報
+        description: ユーザー情報とアクセストークン
         required: true
         content:
           application/json:
@@ -243,14 +214,14 @@ paths:
               type: object
               required:
                 - username
-                - password
+                - token
               properties:
                 username:
                   type: "string"
                   example: "new_username"
-                password:
+                token:
                   type: "string"
-                  example: "password"
+                  example: "xxxxxxxxxxxxxxxxxxxxxxxx"
 
       responses:
         200:
@@ -288,24 +259,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BodyValidationError'
+                oneOf:
+                  - $ref: '#/components/schemas/BodyValidationError'
+                  - $ref: '#/components/schemas/FailedAuthenticateError'
               examples:
                 response1:
                   summary: Bodyの形式が正しくない場合
                   value:
                     message: Body is not valid
-        404:
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/UserNotFoundError'
-              examples:
-                response1:
-                  summary: 存在しないユーザーIDの場合
+                response2:
+                  summary: 認証に失敗した場合
                   value:
-                    message: User not found
+                    message: Failed to authenticate
         500:
           description: Internal Server Error
           content:
@@ -322,28 +287,19 @@ paths:
         - user
       description: |
         ユーザー情報を削除する
-      
-      parameters:
-        - name: "user_id"
-          in: "path"
-          description: "ユーザーID"
-          required: true
-          schema:
-            type: "string"
-
       requestBody:
-        description: パスワード
+        description: アクセストークン
         required: true
         content:
           application/json:
             schema:
               type: object
               required:
-                - password
+                - token
               properties:
-                password:
+                token:
                   type: "string"
-                  example: "password"
+                  example: "xxxxxxxxxxxxxxxxxxxxxxxx"
       
       responses:
         200:
@@ -372,24 +328,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BodyValidationError'
+                oneOf:
+                  - $ref: '#/components/schemas/BodyValidationError'
+                  - $ref: '#/components/schemas/FailedAuthenticateError'
               examples:
                 response1:
                   summary: Bodyの形式が正しくない場合
                   value:
                     message: Body is not valid
-        404:
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/UserNotFoundError'
-              examples:
-                response1:
-                  summary: 存在しないユーザーIDの場合
+                response2:
+                  summary: 認証に失敗した場合
                   value:
-                    message: User not found
+                    message: Failed to authenticate
         500:
           description: Internal Server Error
           content:
@@ -401,6 +351,134 @@ paths:
                   summary: データベースへの接続エラー
                   value:
                     message: Database connection error
+  /signin:
+    post:
+      tags:
+        - auth
+      description: |
+        ログイン用のエンドポイント
+
+      requestBody:
+        description: ユーザー情報
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - password
+              properties:
+                user_id:
+                  type: "string"
+                  example: "user_id"
+                password:
+                  type: "string"
+                  example: "password"
+
+      responses:
+        201:
+          description: Successful responses
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Token can be acquired"
+                  token:
+                    type: string
+                    example: ""
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BodyDoesNotExistError'
+              examples:
+                response1:
+                  summary: Bodyが存在しない場合
+                  value:
+                    message: Body does not exist
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/BodyValidationError'
+                  - $ref: '#/components/schemas/PassIncorrectError'
+              examples:
+                response1:
+                  summary: Bodyの形式が正しくない場合
+                  value:
+                    message: Body is not valid
+                response2:
+                  summary: ユーザーIDまたはパスワードが正しくない場合
+                  value:
+                    message: User ID or password is incorrect
+        
+  /signout:
+    delete:
+      tags:
+        - auth
+      description: |
+        ログアウト用のエンドポイント
+
+      requestBody:
+        description: トークン
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: "string"
+                  example: ""
+
+      responses:
+        200:
+          description: Successful responses
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Token can be deleted"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BodyDoesNotExistError'
+              examples:
+                response1:
+                  summary: Bodyが存在しない場合
+                  value:
+                    message: Body does not exist
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/BodyValidationError'
+                  - $ref: '#/components/schemas/UserOrPassIncorrectError'
+              examples:
+                response1:
+                  summary: Bodyの形式が正しくない場合
+                  value:
+                    message: Body is not valid
+                response2:
+                  summary: 認証に失敗した場合
+                  value:
+                    message: Failed to authenticate
 
 components:
   schemas:
@@ -458,3 +536,21 @@ components:
             message:
               type: string
               example: "Database connection error"
+    FailedAuthenticateError:
+      type: object
+      properties:
+        failed_authenticate_error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Failed to authenticate"
+    UserOrPassIncorrectError:
+      type: object
+      properties:
+        id_or_pass_incorrect:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "User ID or password is incorrect"

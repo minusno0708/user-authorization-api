@@ -2,16 +2,23 @@ package main
 
 import (
 	"bytes"
-	"net/http"
-	"io/ioutil"
 	"encoding/json"
-	"testing"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"testing"
 
 	"user-register-api/domain"
 )
 
 const endpoint = "http://localhost:8080"
+
+type requestBody struct {
+	TokenString string `json:"token"`
+	UserID      string `json:"user_id"`
+	Username    string `json:"username"`
+	Password    string `json:"password"`
+}
 
 type errorString struct {
 	message string
@@ -30,7 +37,7 @@ func sendRequest(method string, endpoint string, sendingBody *bytes.Buffer) (*ht
 	} else {
 		req, err = http.NewRequest(method, endpoint, nil)
 	}
-	
+
 	if err != nil {
 		return nil, err
 	}
@@ -46,8 +53,8 @@ func sendRequest(method string, endpoint string, sendingBody *bytes.Buffer) (*ht
 
 func verifyExpectedResponse(resp *http.Response, expectedStatusCode int, expectedMessage string, expectedUser *domain.User) error {
 	var response struct {
-		Message string `json:"message"`
-		User domain.User `json:"user"`
+		Message string      `json:"message"`
+		User    domain.User `json:"user"`
 	}
 
 	if resp.StatusCode != expectedStatusCode {
@@ -82,7 +89,7 @@ func TestConnectionApi(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	
+
 	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)

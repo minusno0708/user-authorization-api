@@ -1,24 +1,39 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 
+	"user-register-api/infrastructure/persistence"
 	"user-register-api/interfaces/handler"
 	"user-register-api/usecase"
-	"user-register-api/infrastructure/persistence"
 )
 
 func main() {
 	userPersistence := persistence.NewUserPersistence()
+	tokenPersistence := persistence.NewTokenPersistence()
+
 	userUseCase := usecase.NewUserUseCase(userPersistence)
-	userHandler := handler.NewUserHandler(userUseCase)
+	tokenUseCase := usecase.NewTokenUseCase(tokenPersistence)
+
+	userHandler := handler.NewUserHandler(userUseCase, tokenUseCase)
+	authHandler := handler.NewAuthHandler(userUseCase, tokenUseCase)
 
 	r := gin.Default()
-	r.GET("/", userHandler.HandleConnectionAPI)
-	r.POST("/signin", userHandler.HandleUserSignin)
-	r.GET("/user/:user_id", userHandler.HandleUserGet)
-	r.PUT("/user/:user_id", userHandler.HandleUserPut)
-	r.DELETE("/user/:user_id", userHandler.HandleUserDelete)
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Connection Successful",
+		})
+	})
+
+	r.POST("/signup", userHandler.HandleUserSignup)
+	r.GET("/user", userHandler.HandleUserGet)
+	r.PUT("/user", userHandler.HandleUserPut)
+	r.DELETE("/user", userHandler.HandleUserDelete)
+
+	r.POST("/signin", authHandler.HandleSignin)
+	r.DELETE("/signout", authHandler.HandleSignout)
 
 	r.Run(":8080")
 }
