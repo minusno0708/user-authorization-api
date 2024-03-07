@@ -31,3 +31,14 @@ func TestPasswordIsMatch(t *testing.T) {
 		t.Error("Password is not matched")
 	}
 }
+
+func TestPasswordIsNotMatch(t *testing.T) {
+	pwd := NewPassword("wrong_password")
+	match, err := pwd.IsMatch(hashPwd)
+	if err != nil {
+		t.Error("Error while matching password")
+	}
+	if match {
+		t.Error("Password is matched")
+	}
+}
