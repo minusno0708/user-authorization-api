@@ -22,9 +22,10 @@ type userHandler struct {
 	tokenUseCase usecase.TokenUseCase
 }
 
-func NewUserHandler(uu usecase.UserUseCase) UserHandler {
+func NewUserHandler(uu usecase.UserUseCase, tu usecase.TokenUseCase) UserHandler {
 	return &userHandler{
-		userUseCase: uu,
+		userUseCase:  uu,
+		tokenUseCase: tu,
 	}
 }
 
@@ -232,6 +233,14 @@ func (uh userHandler) HandleUserDelete(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "User can not be deleted",
+		})
+		return
+	}
+
+	err = uh.tokenUseCase.DeleteToken(requestBody.TokenString)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Token can not be deleted",
 		})
 		return
 	}
