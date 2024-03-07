@@ -74,6 +74,56 @@ func TestSigninPasswordNotExist(t *testing.T) {
 	}
 }
 
+func TestSigninUserNotExist(t *testing.T) {
+	expectedStatusCode := http.StatusUnauthorized
+	expectedMessage := "Failed to authenticate"
+
+	requestBody := &domain.User{
+		UserID:   "testuser_not_exist",
+		Password: "testpass",
+	}
+
+	jsonString, err := json.Marshal(requestBody)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err := sendRequest("POST", endpoint+"/signin", bytes.NewBuffer(jsonString))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestSigninPasswordNotCorrect(t *testing.T) {
+	expectedStatusCode := http.StatusUnauthorized
+	expectedMessage := "Failed to authenticate"
+
+	requestBody := &domain.User{
+		UserID:   "testuser",
+		Password: "testpass_not_correct",
+	}
+
+	jsonString, err := json.Marshal(requestBody)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err := sendRequest("POST", endpoint+"/signin", bytes.NewBuffer(jsonString))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestSigninSuccess(t *testing.T) {
 	expectedStatusCode := http.StatusCreated
 	expectedMessage := "Token can be acquired"
