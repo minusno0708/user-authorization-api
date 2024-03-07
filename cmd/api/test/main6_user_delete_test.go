@@ -2,102 +2,54 @@ package main
 
 import (
 	"bytes"
-	"net/http"
-	"io/ioutil"
 	"encoding/json"
+	"net/http"
 	"testing"
-
-	"user-register-api/domain"
 )
 
-func TestDeleteUserParamsNotExist(t *testing.T) {
-	expectedStatusCode := http.StatusNotFound
-	expectedMessage := "404 page not found"
+func TestDeleteUserBodyNotExist(t *testing.T) {
+	expectedStatusCode := http.StatusBadRequest
+	expectedMessage := "Body does not exist"
 
 	resp, err := sendRequest("DELETE", endpoint+"/user", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	if resp.StatusCode != expectedStatusCode {
-		t.Fatalf("Expected status code %v, got %v", expectedStatusCode, resp.StatusCode)
-	}
-
-	responseData, _ := ioutil.ReadAll(resp.Body)
-	
-	responseMessage := string(responseData)
-  	if responseMessage != expectedMessage {
-		t.Fatalf("Expected message %v, got %v", expectedMessage, responseMessage)
-	}
-}
-
-func TestDeleteUserBodyNotExist(t *testing.T) {
-	expectedStatusCode := http.StatusBadRequest
-	expectedMessage := "Body does not exist"
-
-	resp, err := sendRequest("DELETE", endpoint+"/user/"+userID, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	
 	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
-func TestDeleteUserPasswordNotExist(t *testing.T) {
+func TestDeleteUserTokenNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Body is not valid"
 
-	requestBody := &domain.User{}
+	requestBody := requestBody{}
 
 	jsonString, err := json.Marshal(requestBody)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("DELETE", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("DELETE", endpoint+"/user", bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
-	
+
 	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
-func TestDeleteUserUserNotFound(t *testing.T) {
-	expectedStatusCode := http.StatusNotFound
-	expectedMessage := "User not found"
-
-	requestBody := &domain.User{
-		Password: "testpass",
-	}
-
-	jsonString, err := json.Marshal(requestBody)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	resp, err := sendRequest("DELETE", endpoint+"/user/"+"not_exist_user", bytes.NewBuffer(jsonString))
-	if err != nil {
-		t.Fatal(err)
-	}
-	
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestDeleteUserPasswordNotCorrect(t *testing.T) {
+func TestDeleteUserTokenNotCorrect(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
-	expectedMessage := "Password is incorrect"
+	expectedMessage := "Failed to authenticate"
 
-	requestBody := &domain.User{
-		Password: "not_correct_pass",
+	requestBody := requestBody{
+		TokenString: "incorrect token string",
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -105,11 +57,11 @@ func TestDeleteUserPasswordNotCorrect(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("DELETE", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("DELETE", endpoint+"/user", bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
-	
+
 	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
@@ -120,8 +72,8 @@ func TestDeleteUserSuccess(t *testing.T) {
 	expectedStatusCode := http.StatusOK
 	expectedMessage := "User can be deleted"
 
-	requestBody := &domain.User{
-		Password: "testpass",
+	requestBody := requestBody{
+		TokenString: accessToken,
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -129,11 +81,11 @@ func TestDeleteUserSuccess(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("DELETE", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("DELETE", endpoint+"/user", bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
-	
+
 	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
@@ -141,10 +93,35 @@ func TestDeleteUserSuccess(t *testing.T) {
 }
 
 func TestDeleteUserIsUserNotExist(t *testing.T) {
-	expectedStatusCode := http.StatusNotFound
-	expectedMessage := "User not found"
+	expectedStatusCode := http.StatusUnauthorized
+	expectedMessage := "Failed to authenticate"
 
-	requestBody := &domain.User{
+	requestBody := requestBody{
+		TokenString: accessToken,
+	}
+
+	jsonString, err := json.Marshal(requestBody)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err := sendRequest("DELETE", endpoint+"/user", bytes.NewBuffer(jsonString))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestUserCanBeDeleted(t *testing.T) {
+	expectedStatusCode := http.StatusUnauthorized
+	expectedMessage := "User ID or password is incorrect"
+
+	requestBody := requestBody{
+		UserID:   "testuser",
 		Password: "testpass",
 	}
 
@@ -153,7 +130,7 @@ func TestDeleteUserIsUserNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("DELETE", endpoint+"/user/"+userID, bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("POST", endpoint+"/signin", bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}

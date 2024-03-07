@@ -253,3 +253,38 @@ func TestSignoutSuccess(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestGetAccessToken(t *testing.T) {
+	requestBody := &domain.User{
+		UserID:   "testuser",
+		Password: "testpass",
+	}
+
+	jsonString, err := json.Marshal(requestBody)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err := sendRequest("POST", endpoint+"/signin", bytes.NewBuffer(jsonString))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var response struct {
+		Message     string `json:"message"`
+		TokenString string `json:"token"`
+	}
+
+	responseData, _ := ioutil.ReadAll(resp.Body)
+
+	err = json.Unmarshal(responseData, &response)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if response.TokenString == "" {
+		t.Fatal("Token gets failed")
+	}
+
+	accessToken = response.TokenString
+}
