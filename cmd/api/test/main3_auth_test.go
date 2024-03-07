@@ -76,7 +76,7 @@ func TestSigninPasswordNotExist(t *testing.T) {
 
 func TestSigninUserNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
-	expectedMessage := "Failed to authenticate"
+	expectedMessage := "User ID or password is incorrect"
 
 	requestBody := &domain.User{
 		UserID:   "testuser_not_exist",
@@ -101,7 +101,7 @@ func TestSigninUserNotExist(t *testing.T) {
 
 func TestSigninPasswordNotCorrect(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
-	expectedMessage := "Failed to authenticate"
+	expectedMessage := "User ID or password is incorrect"
 
 	requestBody := &domain.User{
 		UserID:   "testuser",
