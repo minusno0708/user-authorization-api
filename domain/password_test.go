@@ -2,7 +2,16 @@ package domain
 
 import "testing"
 
-func TestPassword(t *testing.T) {
+func TestPasswordToHash(t *testing.T) {
 	pwd := NewPassword("test_password1234")
-	t.Log(pwd.value)
+	hash, err := pwd.ToHash()
+	if err != nil {
+		t.Error("Error while hashing password")
+	}
+	if hash == "" {
+		t.Error("Hashing password is empty")
+	}
+	if hash == pwd.value {
+		t.Error("Hashing password is not hashed")
+	}
 }
