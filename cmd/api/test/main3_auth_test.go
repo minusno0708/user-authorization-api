@@ -94,8 +94,8 @@ func TestSigninSuccess(t *testing.T) {
 	}
 
 	var response struct {
-		Message string `json:"message"`
-		Token   string `json:"token"`
+		Message     string `json:"message"`
+		TokenString string `json:"token"`
 	}
 
 	if resp.StatusCode != expectedStatusCode {
@@ -113,11 +113,11 @@ func TestSigninSuccess(t *testing.T) {
 		t.Fatalf("Expected message %v, got %v", expectedMessage, response.Message)
 	}
 
-	if response.Token == "" {
+	if response.TokenString == "" {
 		t.Fatal("Token is empty")
 	}
 
-	accessToken = response.Token
+	accessToken = response.TokenString
 }
 
 func TestSignoutBodyNotExist(t *testing.T) {
@@ -162,7 +162,7 @@ func TestSignoutIncorrectToken(t *testing.T) {
 	expectedMessage := "Failed to authenticate"
 
 	requestBody := &domain.Token{
-		Token: "incorrect_token",
+		TokenString: "incorrect_token",
 	}
 	jsonString, err := json.Marshal(requestBody)
 	if err != nil {
@@ -185,7 +185,7 @@ func TestSignoutSuccess(t *testing.T) {
 	expectedMessage := "Token can be deleted"
 
 	requestBody := &domain.Token{
-		Token: accessToken,
+		TokenString: accessToken,
 	}
 
 	jsonString, err := json.Marshal(requestBody)

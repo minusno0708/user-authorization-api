@@ -53,7 +53,6 @@ func (ah authHandler) HandleSignin(c *gin.Context) {
 	}
 	defer db.Close()
 
-	/* JWT実装後にコメントアウトを外す
 	user, err := ah.userUseCase.FindUserByUserID(db, requestBody.UserID)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
@@ -68,9 +67,8 @@ func (ah authHandler) HandleSignin(c *gin.Context) {
 		})
 		return
 	}
-	*/
 
-	token, err := ah.tokenUseCase.GenerateToken(requestBody.UserID)
+	tokenString, err := ah.tokenUseCase.GenerateToken(requestBody.UserID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Token can not be generated",
@@ -80,13 +78,13 @@ func (ah authHandler) HandleSignin(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Token can be acquired",
-		"token":   token,
+		"token":   tokenString,
 	})
 }
 
 func (ah authHandler) HandleSignout(c *gin.Context) {
 	var requestBody struct {
-		Token string `json:"token"`
+		TokenString string `json:"token"`
 	}
 
 	if err := c.ShouldBindJSON(&requestBody); err != nil {
@@ -95,14 +93,14 @@ func (ah authHandler) HandleSignout(c *gin.Context) {
 		})
 		return
 	}
-	if requestBody.Token == "" {
+	if requestBody.TokenString == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Body is not valid",
 		})
 		return
 	}
 
-	err := ah.tokenUseCase.DeleteToken(requestBody.Token)
+	err := ah.tokenUseCase.DeleteToken(requestBody.TokenString)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Failed to authenticate",
