@@ -5,7 +5,7 @@ import (
 	"time"
 	"user-register-api/domain/repository"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )
 
