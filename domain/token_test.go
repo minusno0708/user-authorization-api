@@ -1,6 +1,8 @@
 package domain
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestDomainToken(t *testing.T) {
 	userID := "test_user"
@@ -22,5 +24,18 @@ func TestDomainToken(t *testing.T) {
 	}
 	if parsedToken.UUID() == "" {
 		t.Error("UUID is empty")
+	}
+}
+
+func TestDomainTokenExpired(t *testing.T) {
+	userID := "test_user"
+	token := NewToken(userID)
+	tokenString, err := token.ToString()
+	if err != nil {
+		t.Error("Error while generating token")
+	}
+	parsedToken, _ := ParseToken(tokenString)
+	if parsedToken.IsExpired() {
+		t.Error("Token is expired")
 	}
 }

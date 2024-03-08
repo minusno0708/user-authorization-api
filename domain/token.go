@@ -53,3 +53,11 @@ func (t *Token) UUID() string {
 func (t *Token) UserID() string {
 	return t.value.Claims.(jwt.MapClaims)["user_id"].(string)
 }
+
+func (t *Token) Exp() float64 {
+	return t.value.Claims.(jwt.MapClaims)["exp"].(float64)
+}
+
+func (t *Token) IsExpired() bool {
+	return time.Now().Unix() > int64(t.Exp())
+}
