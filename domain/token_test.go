@@ -30,6 +30,10 @@ func TestDomainToken(t *testing.T) {
 func TestDomainTokenExpired(t *testing.T) {
 	userID := "test_user"
 	token := NewToken(userID)
+	if token.IsExpired() {
+		t.Error("Token is expired")
+	}
+
 	tokenString, err := token.ToString()
 	if err != nil {
 		t.Error("Error while generating token")
