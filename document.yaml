@@ -65,15 +65,6 @@ paths:
                   message:
                     type: string
                     example: "User created successfully"
-                  user:
-                    type: object
-                    properties:
-                      user_id:
-                        type: string
-                        example: "user_id"
-                      username:
-                        type: string
-                        example: "username"
         400:
           description: Bad Request
           content:
@@ -234,15 +225,6 @@ paths:
                   message:
                     type: string
                     example: "User can be updated"
-                  user:
-                    type: object
-                    properties:
-                      user_id:
-                        type: string
-                        example: "user_id"
-                      username:
-                        type: string
-                        example: "username"
         400:
           description: Bad Request
           content:

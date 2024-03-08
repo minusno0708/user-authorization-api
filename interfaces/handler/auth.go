@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-	"user-register-api/config"
 	"user-register-api/domain"
 	"user-register-api/usecase"
 
@@ -45,16 +44,7 @@ func (ah authHandler) HandleSignin(c *gin.Context) {
 		return
 	}
 
-	db, err := config.ConnectDB()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Database connection error",
-		})
-		return
-	}
-	defer db.Close()
-
-	user, err := ah.userUseCase.FindUserByUserID(db, requestBody.UserID)
+	user, err := ah.userUseCase.FindUserByUserID(requestBody.UserID)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "User ID or password is incorrect",

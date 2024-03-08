@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"testing"
-
 	"user-register-api/domain"
 )
 
@@ -18,7 +17,7 @@ func TestPutUserBodyNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -42,7 +41,7 @@ func TestPutUserTokenNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -66,7 +65,7 @@ func TestPutUserUsernameNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -91,7 +90,7 @@ func TestPutUserTokenNotCorrect(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -100,6 +99,7 @@ func TestPutUserTokenNotCorrect(t *testing.T) {
 func TestPutUserSuccess(t *testing.T) {
 	expectedStatusCode := http.StatusOK
 	expectedMessage := "User can be updated"
+
 	expectedUser := &domain.User{
 		UserID:   "testuser",
 		Username: "testname_updated",
@@ -120,8 +120,22 @@ func TestPutUserSuccess(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, expectedUser)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	resp, err = sendRequest("GET", endpoint+"/user", bytes.NewBuffer(jsonString))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	response, err := verifyExpectedResponse(resp, expectedStatusCode, "User can be acquired")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if response.User != *expectedUser {
+		t.Fatal("Username is not updated")
 	}
 }

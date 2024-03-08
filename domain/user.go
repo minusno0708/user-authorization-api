@@ -5,3 +5,15 @@ type User struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
+
+func NewUser(userID, username, password string) *User {
+	if username == "" {
+		username = userID
+	}
+
+	return &User{
+		UserID:   userID,
+		Username: username,
+		Password: password,
+	}
+}

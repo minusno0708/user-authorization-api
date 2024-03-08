@@ -19,9 +19,9 @@ func TestInsertUser(t *testing.T) {
 		t.Error(err)
 	}
 	defer db.Close()
-	userPersistence := NewUserPersistence()
+	userPersistence := NewUserPersistence(db)
 
-	err = userPersistence.InsertUser(db, testUser.UserID, testUser.Username, testUser.Password)
+	err = userPersistence.InsertUser(&testUser)
 	if err != nil {
 		t.Error(err)
 	}
@@ -33,9 +33,9 @@ func TestInsertUserDuplicate(t *testing.T) {
 		t.Error(err)
 	}
 	defer db.Close()
-	userPersistence := NewUserPersistence()
+	userPersistence := NewUserPersistence(db)
 
-	err = userPersistence.InsertUser(db, testUser.UserID, testUser.Username, testUser.Password)
+	err = userPersistence.InsertUser(&testUser)
 	if err == nil {
 		t.Error("Expected error, got nil")
 	}
@@ -47,9 +47,9 @@ func TestFindUserByUserID(t *testing.T) {
 		t.Error(err)
 	}
 	defer db.Close()
-	userPersistence := NewUserPersistence()
+	userPersistence := NewUserPersistence(db)
 
-	user, err := userPersistence.FindUserByUserID(db, testUser.UserID)
+	user, err := userPersistence.FindUserByUserID(testUser.UserID)
 	if err != nil {
 		t.Error(err)
 	}
@@ -70,15 +70,15 @@ func TestUpdateUsername(t *testing.T) {
 		t.Error(err)
 	}
 	defer db.Close()
-	userPersistence := NewUserPersistence()
+	userPersistence := NewUserPersistence(db)
 
 	updatedName := "testuser_db_updated"
-	err = userPersistence.UpdateUsername(db, testUser.UserID, updatedName)
+	err = userPersistence.UpdateUsername(testUser.UserID, updatedName)
 	if err != nil {
 		t.Error(err)
 	}
 
-	user, err := userPersistence.FindUserByUserID(db, testUser.UserID)
+	user, err := userPersistence.FindUserByUserID(testUser.UserID)
 	if err != nil {
 		t.Error(err)
 	}
@@ -93,9 +93,9 @@ func TestDeleteUser(t *testing.T) {
 		t.Error(err)
 	}
 	defer db.Close()
-	userPersistence := NewUserPersistence()
+	userPersistence := NewUserPersistence(db)
 
-	err = userPersistence.DeleteUser(db, testUser.UserID)
+	err = userPersistence.DeleteUser(testUser.UserID)
 	if err != nil {
 		t.Error(err)
 	}

@@ -1,17 +1,15 @@
 package usecase
 
 import (
-	"database/sql"
-
 	"user-register-api/domain"
 	"user-register-api/domain/repository"
 )
 
 type UserUseCase interface {
-	InsertUser(db *sql.DB, userID, username, password string) (*domain.User, error)
-	FindUserByUserID(db *sql.DB, userID string) (*domain.User, error)
-	UpdateUsername(db *sql.DB, userID, username string) (*domain.User, error)
-	DeleteUser(db *sql.DB, userID string) error
+	InsertUser(userID, username, password string) error
+	FindUserByUserID(userID string) (*domain.User, error)
+	UpdateUsername(userID, username string) error
+	DeleteUser(userID string) error
 }
 
 type userUseCase struct {
@@ -24,53 +22,41 @@ func NewUserUseCase(ur repository.UserRepository) UserUseCase {
 	}
 }
 
-func (uu userUseCase) InsertUser(db *sql.DB, userID, username, password string) (*domain.User, error) {
-	if username == "" {
-		username = userID
-	}
-
+func (uu userUseCase) InsertUser(userID, username, password string) error {
 	hashPassword, err := domain.NewPassword(password).ToHash()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	err = uu.userRepository.InsertUser(db, userID, username, hashPassword)
+	user := domain.NewUser(userID, username, hashPassword)
+
+	err = uu.userRepository.InsertUser(user)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (uu userUseCase) FindUserByUserID(userID string) (*domain.User, error) {
+	user, err := uu.userRepository.FindUserByUserID(userID)
 	if err != nil {
 		return nil, err
 	}
-
-	user, err := uu.userRepository.FindUserByUserID(db, userID)
-	if err != nil {
-		return nil, err
-	}
-
 	return user, nil
 }
 
-func (uu userUseCase) FindUserByUserID(db *sql.DB, userID string) (*domain.User, error) {
-	user, err := uu.userRepository.FindUserByUserID(db, userID)
+func (uu userUseCase) UpdateUsername(userID, username string) error {
+	err := uu.userRepository.UpdateUsername(userID, username)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return user, nil
+
+	return nil
 }
 
-func (uu userUseCase) UpdateUsername(db *sql.DB, userID, username string) (*domain.User, error) {
-	err := uu.userRepository.UpdateUsername(db, userID, username)
-	if err != nil {
-		return nil, err
-	}
-
-	user, err := uu.userRepository.FindUserByUserID(db, userID)
-	if err != nil {
-		return nil, err
-	}
-
-	return user, nil
-}
-
-func (uu userUseCase) DeleteUser(db *sql.DB, userID string) error {
-	err := uu.userRepository.DeleteUser(db, userID)
+func (uu userUseCase) DeleteUser(userID string) error {
+	err := uu.userRepository.DeleteUser(userID)
 	if err != nil {
 		return err
 	}

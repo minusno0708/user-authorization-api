@@ -8,8 +8,10 @@ services:
       - .:/app
     tty: true
     depends_on:
-      - db
-      - cache
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
     ports:
       - 8080:8080
 
@@ -21,6 +23,12 @@ services:
       - ./build/db/initdb.d:/docker-entrypoint-initdb.d
     ports:
       - 3306:3306
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
     environment:
       MYSQL_ROOT_PASSWORD: root
 
@@ -30,3 +38,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 10s

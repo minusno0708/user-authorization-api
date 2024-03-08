@@ -2,11 +2,8 @@ package usecase
 
 import (
 	"errors"
-	"time"
+	"user-register-api/domain"
 	"user-register-api/domain/repository"
-
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
 )
 
 type TokenUseCase interface {
@@ -25,35 +22,15 @@ func NewTokenUseCase(tr repository.TokenRepository) TokenUseCase {
 	}
 }
 
-var secretKey = "secret"
-
-func tokenParse(tokenString string) (*jwt.Token, error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("invalid token")
-		}
-		return []byte(secretKey), nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	return token, nil
-}
-
 func (tu tokenUseCase) GenerateToken(userID string) (string, error) {
-	claims := jwt.MapClaims{
-		"user_id": userID,
-		"uuid":    uuid.New().String(),
-		"exp":     time.Now().Add(time.Hour * 24).Unix(),
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	token := domain.NewToken(userID)
 
-	tokenString, err := token.SignedString([]byte(secretKey))
+	tokenString, err := token.ToString()
 	if err != nil {
 		return "", err
 	}
 
-	err = tu.tokenRepository.SaveToken(userID, claims["uuid"].(string))
+	err = tu.tokenRepository.SaveToken(userID, token.UUID())
 	if err != nil {
 		return "", err
 	}
@@ -61,18 +38,18 @@ func (tu tokenUseCase) GenerateToken(userID string) (string, error) {
 }
 
 func (tu tokenUseCase) ValidateToken(tokenString string) (string, error) {
-	token, err := tokenParse(tokenString)
+	token, err := domain.ParseToken(tokenString)
 	if err != nil {
 		return "", err
 	}
 
-	userID := token.Claims.(jwt.MapClaims)["user_id"].(string)
-	tokenUuid, err := tu.tokenRepository.ValidateToken(userID)
+	userID := token.UserID()
+	tokenUUID, err := tu.tokenRepository.ValidateToken(userID)
 	if err != nil {
 		return "", err
 	}
 
-	if tokenUuid != token.Claims.(jwt.MapClaims)["uuid"].(string) {
+	if tokenUUID != token.UUID() {
 		return "", errors.New("invalid token")
 	}
 
@@ -80,12 +57,12 @@ func (tu tokenUseCase) ValidateToken(tokenString string) (string, error) {
 }
 
 func (tu tokenUseCase) DeleteToken(tokenString string) error {
-	token, err := tokenParse(tokenString)
+	token, err := domain.ParseToken(tokenString)
 	if err != nil {
 		return err
 	}
 
-	userID := token.Claims.(jwt.MapClaims)["user_id"].(string)
+	userID := token.UserID()
 	err = tu.tokenRepository.DeleteToken(userID)
 	if err != nil {
 		return err

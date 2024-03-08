@@ -19,13 +19,19 @@ func TestUsecaseInsertUser(t *testing.T) {
 		t.Error(err)
 	}
 	defer db.Close()
-	userPersistence := persistence.NewUserPersistence()
+	userPersistence := persistence.NewUserPersistence(db)
 	userUseCase := NewUserUseCase(userPersistence)
 
-	user, err := userUseCase.InsertUser(db, testUser.UserID, testUser.Username, testUser.Password)
+	err = userUseCase.InsertUser(testUser.UserID, testUser.Username, testUser.Password)
 	if err != nil {
 		t.Error(err)
 	}
+
+	user, err := userUseCase.FindUserByUserID(testUser.UserID)
+	if err != nil {
+		t.Error(err)
+	}
+
 	if user.Username != testUser.UserID {
 		t.Errorf("Username is not correct")
 	}
@@ -39,13 +45,19 @@ func TestUsecaseUpdateUser(t *testing.T) {
 		t.Error(err)
 	}
 	defer db.Close()
-	userPersistence := persistence.NewUserPersistence()
+	userPersistence := persistence.NewUserPersistence(db)
 	userUseCase := NewUserUseCase(userPersistence)
 
-	user, err := userUseCase.UpdateUsername(db, testUser.UserID, updatedUsername)
+	err = userUseCase.UpdateUsername(testUser.UserID, updatedUsername)
 	if err != nil {
 		t.Error(err)
 	}
+
+	user, err := userUseCase.FindUserByUserID(testUser.UserID)
+	if err != nil {
+		t.Error(err)
+	}
+
 	if user.Username != updatedUsername {
 		t.Errorf("Username is not correct")
 	}
@@ -57,10 +69,10 @@ func TestUsecaseDeleteUser(t *testing.T) {
 		t.Error(err)
 	}
 	defer db.Close()
-	userPersistence := persistence.NewUserPersistence()
+	userPersistence := persistence.NewUserPersistence(db)
 	userUseCase := NewUserUseCase(userPersistence)
 
-	err = userUseCase.DeleteUser(db, testUser.UserID)
+	err = userUseCase.DeleteUser(testUser.UserID)
 	if err != nil {
 		t.Error(err)
 	}
