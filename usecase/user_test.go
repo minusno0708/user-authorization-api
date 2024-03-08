@@ -22,10 +22,16 @@ func TestUsecaseInsertUser(t *testing.T) {
 	userPersistence := persistence.NewUserPersistence(db)
 	userUseCase := NewUserUseCase(userPersistence)
 
-	user, err := userUseCase.InsertUser(testUser.UserID, testUser.Username, testUser.Password)
+	err = userUseCase.InsertUser(testUser.UserID, testUser.Username, testUser.Password)
 	if err != nil {
 		t.Error(err)
 	}
+
+	user, err := userUseCase.FindUserByUserID(testUser.UserID)
+	if err != nil {
+		t.Error(err)
+	}
+
 	if user.Username != testUser.UserID {
 		t.Errorf("Username is not correct")
 	}
@@ -42,10 +48,16 @@ func TestUsecaseUpdateUser(t *testing.T) {
 	userPersistence := persistence.NewUserPersistence(db)
 	userUseCase := NewUserUseCase(userPersistence)
 
-	user, err := userUseCase.UpdateUsername(testUser.UserID, updatedUsername)
+	err = userUseCase.UpdateUsername(testUser.UserID, updatedUsername)
 	if err != nil {
 		t.Error(err)
 	}
+
+	user, err := userUseCase.FindUserByUserID(testUser.UserID)
+	if err != nil {
+		t.Error(err)
+	}
+
 	if user.Username != updatedUsername {
 		t.Errorf("Username is not correct")
 	}

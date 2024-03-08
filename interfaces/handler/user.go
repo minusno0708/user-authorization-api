@@ -52,7 +52,7 @@ func (uh userHandler) HandleUserSignup(c *gin.Context) {
 		return
 	}
 
-	user, err := uh.userUseCase.InsertUser(requestBody.UserID, requestBody.Username, requestBody.Password)
+	err := uh.userUseCase.InsertUser(requestBody.UserID, requestBody.Username, requestBody.Password)
 	if err != nil {
 		c.JSON(http.StatusConflict, gin.H{
 			"message": "User already exists",
@@ -62,10 +62,6 @@ func (uh userHandler) HandleUserSignup(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "User created successfully",
-		"user": &responseUser{
-			UserID:   user.UserID,
-			Username: user.Username,
-		},
 	})
 }
 
@@ -141,7 +137,7 @@ func (uh userHandler) HandleUserPut(c *gin.Context) {
 		return
 	}
 
-	user, err := uh.userUseCase.UpdateUsername(userID, requestBody.NewUsername)
+	err = uh.userUseCase.UpdateUsername(userID, requestBody.NewUsername)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "User can not be updated",
@@ -151,10 +147,6 @@ func (uh userHandler) HandleUserPut(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User can be updated",
-		"user": &responseUser{
-			UserID:   user.UserID,
-			Username: user.Username,
-		},
 	})
 }
 

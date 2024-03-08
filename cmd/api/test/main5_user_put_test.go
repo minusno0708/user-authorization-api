@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"testing"
-
 	"user-register-api/domain"
 )
 
@@ -100,6 +99,7 @@ func TestPutUserTokenNotCorrect(t *testing.T) {
 func TestPutUserSuccess(t *testing.T) {
 	expectedStatusCode := http.StatusOK
 	expectedMessage := "User can be updated"
+
 	expectedUser := &domain.User{
 		UserID:   "testuser",
 		Username: "testname_updated",
@@ -120,7 +120,17 @@ func TestPutUserSuccess(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, expectedUser)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err = sendRequest("GET", endpoint+"/user", bytes.NewBuffer(jsonString))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = verifyExpectedResponse(resp, expectedStatusCode, "User can be acquired", expectedUser)
 	if err != nil {
 		t.Fatal(err)
 	}

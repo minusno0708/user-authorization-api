@@ -6,9 +6,9 @@ import (
 )
 
 type UserUseCase interface {
-	InsertUser(userID, username, password string) (*domain.User, error)
+	InsertUser(userID, username, password string) error
 	FindUserByUserID(userID string) (*domain.User, error)
-	UpdateUsername(userID, username string) (*domain.User, error)
+	UpdateUsername(userID, username string) error
 	DeleteUser(userID string) error
 }
 
@@ -22,25 +22,20 @@ func NewUserUseCase(ur repository.UserRepository) UserUseCase {
 	}
 }
 
-func (uu userUseCase) InsertUser(userID, username, password string) (*domain.User, error) {
+func (uu userUseCase) InsertUser(userID, username, password string) error {
 	hashPassword, err := domain.NewPassword(password).ToHash()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	user := domain.NewUser(userID, username, hashPassword)
 
 	err = uu.userRepository.InsertUser(user)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	user, err = uu.userRepository.FindUserByUserID(userID)
-	if err != nil {
-		return nil, err
-	}
-
-	return user, nil
+	return nil
 }
 
 func (uu userUseCase) FindUserByUserID(userID string) (*domain.User, error) {
@@ -51,18 +46,13 @@ func (uu userUseCase) FindUserByUserID(userID string) (*domain.User, error) {
 	return user, nil
 }
 
-func (uu userUseCase) UpdateUsername(userID, username string) (*domain.User, error) {
+func (uu userUseCase) UpdateUsername(userID, username string) error {
 	err := uu.userRepository.UpdateUsername(userID, username)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	user, err := uu.userRepository.FindUserByUserID(userID)
-	if err != nil {
-		return nil, err
-	}
-
-	return user, nil
+	return nil
 }
 
 func (uu userUseCase) DeleteUser(userID string) error {

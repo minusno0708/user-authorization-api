@@ -9,8 +9,6 @@ import (
 	"user-register-api/domain"
 )
 
-var userID = "testuser"
-
 func TestGetUserBodyNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusBadRequest
 	expectedMessage := "Body does not exist"

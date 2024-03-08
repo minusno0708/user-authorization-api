@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"testing"
-
-	"user-register-api/domain"
 )
 
 func TestSignupBodyNotExist(t *testing.T) {
@@ -84,11 +82,6 @@ func TestSignupSuccessUsernameExist(t *testing.T) {
 		Password: "testpass",
 	}
 
-	expectedUser := &domain.User{
-		UserID:   "testuser",
-		Username: "testname",
-	}
-
 	jsonString, err := json.Marshal(requestBody)
 	if err != nil {
 		t.Fatal(err)
@@ -99,7 +92,7 @@ func TestSignupSuccessUsernameExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, expectedUser)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -114,11 +107,6 @@ func TestSignupSuccessUsernameNotExist(t *testing.T) {
 		Password: "testpass",
 	}
 
-	expectedUser := &domain.User{
-		UserID:   "testuser_name_not_exist",
-		Username: "testuser_name_not_exist",
-	}
-
 	jsonString, err := json.Marshal(requestBody)
 	if err != nil {
 		t.Fatal(err)
@@ -129,7 +117,7 @@ func TestSignupSuccessUsernameNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, expectedUser)
+	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
