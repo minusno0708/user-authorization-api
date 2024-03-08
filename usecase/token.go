@@ -43,6 +43,10 @@ func (tu tokenUseCase) ValidateToken(tokenString string) (string, error) {
 		return "", err
 	}
 
+	if token.IsExpired() {
+		return "", errors.New("token is expired")
+	}
+
 	userID := token.UserID()
 	tokenUUID, err := tu.tokenRepository.ValidateToken(userID)
 	if err != nil {
