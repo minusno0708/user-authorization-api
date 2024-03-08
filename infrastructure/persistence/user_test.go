@@ -21,7 +21,7 @@ func TestInsertUser(t *testing.T) {
 	defer db.Close()
 	userPersistence := NewUserPersistence(db)
 
-	err = userPersistence.InsertUser(testUser.UserID, testUser.Username, testUser.Password)
+	err = userPersistence.InsertUser(&testUser)
 	if err != nil {
 		t.Error(err)
 	}
@@ -35,7 +35,7 @@ func TestInsertUserDuplicate(t *testing.T) {
 	defer db.Close()
 	userPersistence := NewUserPersistence(db)
 
-	err = userPersistence.InsertUser(testUser.UserID, testUser.Username, testUser.Password)
+	err = userPersistence.InsertUser(&testUser)
 	if err == nil {
 		t.Error("Expected error, got nil")
 	}

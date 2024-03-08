@@ -23,21 +23,19 @@ func NewUserUseCase(ur repository.UserRepository) UserUseCase {
 }
 
 func (uu userUseCase) InsertUser(userID, username, password string) (*domain.User, error) {
-	if username == "" {
-		username = userID
-	}
-
 	hashPassword, err := domain.NewPassword(password).ToHash()
 	if err != nil {
 		return nil, err
 	}
 
-	err = uu.userRepository.InsertUser(userID, username, hashPassword)
+	user := domain.NewUser(userID, username, hashPassword)
+
+	err = uu.userRepository.InsertUser(user)
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := uu.userRepository.FindUserByUserID(userID)
+	user, err = uu.userRepository.FindUserByUserID(userID)
 	if err != nil {
 		return nil, err
 	}

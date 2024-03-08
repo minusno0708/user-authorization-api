@@ -15,12 +15,12 @@ func NewUserPersistence(db *sql.DB) repository.UserRepository {
 	return &userPersistence{db}
 }
 
-func (up userPersistence) InsertUser(userID, username, password string) error {
+func (up userPersistence) InsertUser(user *domain.User) error {
 	_, err := up.Exec(
 		"INSERT INTO users (user_id, username, password) VALUES (?, ?, ?)",
-		userID,
-		username,
-		password,
+		user.UserID,
+		user.Username,
+		user.Password,
 	)
 	if err != nil {
 		return err

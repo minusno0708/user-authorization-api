@@ -5,7 +5,7 @@ import (
 )
 
 type UserRepository interface {
-	InsertUser(userID, username, password string) error
+	InsertUser(user *domain.User) error
 	FindUserByUserID(userID string) (*domain.User, error)
 	UpdateUsername(userID string, username string) error
 	DeleteUser(userID string) error
