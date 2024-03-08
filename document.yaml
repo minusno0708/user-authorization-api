@@ -117,19 +117,13 @@ paths:
         - user
       description: |
         ユーザー情報を取得する
-      requestBody:
-        description: アクセストークン
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - token
-              properties:
-                token:
-                  type: "string"
-                  example: "xxxxxxxxxxxxxxxxxxxxxxxx"
+      parameters:
+        - name: token
+          in: header
+          required: true
+          schema:
+            type: string
+          description: アクセストークン
 
       responses:
         200:
@@ -196,8 +190,15 @@ paths:
         - user
       description: |
         ユーザー情報を更新する
+      parameters:
+        - name: token
+          in: header
+          required: true
+          schema:
+            type: string
+          description: アクセストークン
       requestBody:
-        description: ユーザー情報とアクセストークン
+        description: 新規ユーザー名
         required: true
         content:
           application/json:
@@ -205,14 +206,10 @@ paths:
               type: object
               required:
                 - username
-                - token
               properties:
                 username:
                   type: "string"
                   example: "new_username"
-                token:
-                  type: "string"
-                  example: "xxxxxxxxxxxxxxxxxxxxxxxx"
 
       responses:
         200:
@@ -269,19 +266,13 @@ paths:
         - user
       description: |
         ユーザー情報を削除する
-      requestBody:
-        description: アクセストークン
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - token
-              properties:
-                token:
-                  type: "string"
-                  example: "xxxxxxxxxxxxxxxxxxxxxxxx"
+      parameters:
+        - name: token
+          in: header
+          required: true
+          schema:
+            type: string
+          description: アクセストークン
       
       responses:
         200:
@@ -407,20 +398,13 @@ paths:
         - auth
       description: |
         ログアウト用のエンドポイント
-
-      requestBody:
-        description: トークン
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - token
-              properties:
-                token:
-                  type: "string"
-                  example: ""
+      parameters:
+        - name: token
+          in: header
+          required: true
+          schema:
+            type: string
+          description: アクセストークン
 
       responses:
         200:
