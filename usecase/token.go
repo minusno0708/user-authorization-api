@@ -44,12 +44,12 @@ func (tu tokenUseCase) ValidateToken(tokenString string) (string, error) {
 	}
 
 	userID := token.UserID()
-	tokenUuid, err := tu.tokenRepository.ValidateToken(userID)
+	tokenUUID, err := tu.tokenRepository.ValidateToken(userID)
 	if err != nil {
 		return "", err
 	}
 
-	if tokenUuid != token.UUID() {
+	if tokenUUID != token.UUID() {
 		return "", errors.New("invalid token")
 	}
 

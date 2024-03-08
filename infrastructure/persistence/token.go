@@ -14,7 +14,7 @@ func NewTokenPersistence() repository.TokenRepository {
 	return &tokenPersistence{}
 }
 
-func (tp tokenPersistence) SaveToken(userID, tokenUuid string) error {
+func (tp tokenPersistence) SaveToken(userID, tokenUUID string) error {
 	ctx := context.Background()
 
 	cdb, err := config.ConnectCacheDB()
@@ -22,7 +22,7 @@ func (tp tokenPersistence) SaveToken(userID, tokenUuid string) error {
 		return err
 	}
 
-	err = cdb.Set(ctx, userID, tokenUuid, time.Hour).Err()
+	err = cdb.Set(ctx, userID, tokenUUID, time.Hour).Err()
 	if err != nil {
 		return err
 	}
@@ -38,7 +38,7 @@ func (tp tokenPersistence) ValidateToken(userID string) (string, error) {
 		return "", err
 	}
 
-	tokenUuid, err := cdb.Get(ctx, userID).Result()
+	tokenUUID, err := cdb.Get(ctx, userID).Result()
 	if err != nil {
 		return "", err
 	}
@@ -48,7 +48,7 @@ func (tp tokenPersistence) ValidateToken(userID string) (string, error) {
 		return "", err
 	}
 
-	return tokenUuid, nil
+	return tokenUUID, nil
 }
 
 func (tp tokenPersistence) DeleteToken(userID string) error {

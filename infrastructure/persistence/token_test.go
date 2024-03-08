@@ -2,12 +2,12 @@ package persistence
 
 import "testing"
 
-var exampleUuid = "de5fe5d7-eec2-4fba-e071-fa2de7c1e440"
+var exampleUUID = "de5fe5d7-eec2-4fba-e071-fa2de7c1e440"
 
 func TestSaveToken(t *testing.T) {
 	tokenPersistence := NewTokenPersistence()
 
-	err := tokenPersistence.SaveToken(testUser.UserID, exampleUuid)
+	err := tokenPersistence.SaveToken(testUser.UserID, exampleUUID)
 	if err != nil {
 		t.Error(err)
 	}
@@ -20,7 +20,7 @@ func TestValidateToken(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	if token != exampleUuid {
+	if token != exampleUUID {
 		t.Errorf("UUID is not match")
 	}
 }
