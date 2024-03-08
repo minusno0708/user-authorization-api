@@ -7,14 +7,16 @@ import (
 	"user-register-api/domain/repository"
 )
 
-type userPersistence struct{}
-
-func NewUserPersistence() repository.UserRepository {
-	return &userPersistence{}
+type userPersistence struct {
+	*sql.DB
 }
 
-func (up userPersistence) InsertUser(db *sql.DB, userID, username, password string) error {
-	_, err := db.Exec(
+func NewUserPersistence(db *sql.DB) repository.UserRepository {
+	return &userPersistence{db}
+}
+
+func (up userPersistence) InsertUser(userID, username, password string) error {
+	_, err := up.Exec(
 		"INSERT INTO users (user_id, username, password) VALUES (?, ?, ?)",
 		userID,
 		username,
@@ -27,9 +29,9 @@ func (up userPersistence) InsertUser(db *sql.DB, userID, username, password stri
 	return nil
 }
 
-func (up userPersistence) FindUserByUserID(db *sql.DB, userID string) (*domain.User, error) {
+func (up userPersistence) FindUserByUserID(userID string) (*domain.User, error) {
 	user := domain.User{}
-	err := db.QueryRow(
+	err := up.QueryRow(
 		"SELECT user_id, username, password FROM users WHERE user_id = ?",
 		userID,
 	).Scan(
@@ -44,8 +46,8 @@ func (up userPersistence) FindUserByUserID(db *sql.DB, userID string) (*domain.U
 	return &user, nil
 }
 
-func (up userPersistence) UpdateUsername(db *sql.DB, userID, username string) error {
-	_, err := db.Exec(
+func (up userPersistence) UpdateUsername(userID, username string) error {
+	_, err := up.Exec(
 		"UPDATE users SET username = ? WHERE user_id = ?",
 		username,
 		userID,
@@ -57,8 +59,8 @@ func (up userPersistence) UpdateUsername(db *sql.DB, userID, username string) er
 	return nil
 }
 
-func (up userPersistence) DeleteUser(db *sql.DB, userID string) error {
-	_, err := db.Exec(
+func (up userPersistence) DeleteUser(userID string) error {
+	_, err := up.Exec(
 		"DELETE FROM users WHERE user_id = ?",
 		userID,
 	)

@@ -19,10 +19,10 @@ func TestUsecaseInsertUser(t *testing.T) {
 		t.Error(err)
 	}
 	defer db.Close()
-	userPersistence := persistence.NewUserPersistence()
+	userPersistence := persistence.NewUserPersistence(db)
 	userUseCase := NewUserUseCase(userPersistence)
 
-	user, err := userUseCase.InsertUser(db, testUser.UserID, testUser.Username, testUser.Password)
+	user, err := userUseCase.InsertUser(testUser.UserID, testUser.Username, testUser.Password)
 	if err != nil {
 		t.Error(err)
 	}
@@ -39,10 +39,10 @@ func TestUsecaseUpdateUser(t *testing.T) {
 		t.Error(err)
 	}
 	defer db.Close()
-	userPersistence := persistence.NewUserPersistence()
+	userPersistence := persistence.NewUserPersistence(db)
 	userUseCase := NewUserUseCase(userPersistence)
 
-	user, err := userUseCase.UpdateUsername(db, testUser.UserID, updatedUsername)
+	user, err := userUseCase.UpdateUsername(testUser.UserID, updatedUsername)
 	if err != nil {
 		t.Error(err)
 	}
@@ -57,10 +57,10 @@ func TestUsecaseDeleteUser(t *testing.T) {
 		t.Error(err)
 	}
 	defer db.Close()
-	userPersistence := persistence.NewUserPersistence()
+	userPersistence := persistence.NewUserPersistence(db)
 	userUseCase := NewUserUseCase(userPersistence)
 
-	err = userUseCase.DeleteUser(db, testUser.UserID)
+	err = userUseCase.DeleteUser(testUser.UserID)
 	if err != nil {
 		t.Error(err)
 	}

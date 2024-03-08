@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"user-register-api/config"
 	"user-register-api/usecase"
 )
 
@@ -53,16 +52,7 @@ func (uh userHandler) HandleUserSignup(c *gin.Context) {
 		return
 	}
 
-	db, err := config.ConnectDB()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Database connection error",
-		})
-		return
-	}
-	defer db.Close()
-
-	user, err := uh.userUseCase.InsertUser(db, requestBody.UserID, requestBody.Username, requestBody.Password)
+	user, err := uh.userUseCase.InsertUser(requestBody.UserID, requestBody.Username, requestBody.Password)
 	if err != nil {
 		c.JSON(http.StatusConflict, gin.H{
 			"message": "User already exists",
@@ -106,16 +96,7 @@ func (uh userHandler) HandleUserGet(c *gin.Context) {
 		return
 	}
 
-	db, err := config.ConnectDB()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Database connection error",
-		})
-		return
-	}
-	defer db.Close()
-
-	user, err := uh.userUseCase.FindUserByUserID(db, userID)
+	user, err := uh.userUseCase.FindUserByUserID(userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "User not found",
@@ -160,16 +141,7 @@ func (uh userHandler) HandleUserPut(c *gin.Context) {
 		return
 	}
 
-	db, err := config.ConnectDB()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Database connection error",
-		})
-		return
-	}
-	defer db.Close()
-
-	user, err := uh.userUseCase.UpdateUsername(db, userID, requestBody.NewUsername)
+	user, err := uh.userUseCase.UpdateUsername(userID, requestBody.NewUsername)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "User can not be updated",
@@ -213,16 +185,7 @@ func (uh userHandler) HandleUserDelete(c *gin.Context) {
 		return
 	}
 
-	db, err := config.ConnectDB()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Database connection error",
-		})
-		return
-	}
-	defer db.Close()
-
-	err = uh.userUseCase.DeleteUser(db, userID)
+	err = uh.userUseCase.DeleteUser(userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "User can not be deleted",
