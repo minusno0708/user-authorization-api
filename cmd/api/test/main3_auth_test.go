@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"testing"
-	"user-register-api/domain"
 )
 
 var accessToken string
@@ -30,7 +29,7 @@ func TestSigninUserIDNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Body is not valid"
 
-	requestBody := &domain.User{
+	requestBody := requestBody{
 		Password: "testpass",
 	}
 
@@ -54,7 +53,7 @@ func TestSigninPasswordNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Body is not valid"
 
-	requestBody := &domain.User{
+	requestBody := requestBody{
 		UserID: "testuser",
 	}
 
@@ -78,7 +77,7 @@ func TestSigninUserNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "User ID or password is incorrect"
 
-	requestBody := &domain.User{
+	requestBody := requestBody{
 		UserID:   "testuser_not_exist",
 		Password: "testpass",
 	}
@@ -103,7 +102,7 @@ func TestSigninPasswordNotCorrect(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "User ID or password is incorrect"
 
-	requestBody := &domain.User{
+	requestBody := requestBody{
 		UserID:   "testuser",
 		Password: "testpass_not_correct",
 	}
@@ -128,7 +127,7 @@ func TestSigninSuccess(t *testing.T) {
 	expectedStatusCode := http.StatusCreated
 	expectedMessage := "Token can be acquired"
 
-	requestBody := &domain.User{
+	requestBody := requestBody{
 		UserID:   "testuser",
 		Password: "testpass",
 	}
@@ -189,7 +188,7 @@ func TestSignoutTokenNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Body is not valid"
 
-	requestBody := &domain.Token{}
+	requestBody := requestBody{}
 
 	jsonString, err := json.Marshal(requestBody)
 	if err != nil {
@@ -211,7 +210,7 @@ func TestSignoutIncorrectToken(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Failed to authenticate"
 
-	requestBody := &domain.Token{
+	requestBody := requestBody{
 		TokenString: "incorrect_token",
 	}
 	jsonString, err := json.Marshal(requestBody)
@@ -234,7 +233,7 @@ func TestSignoutSuccess(t *testing.T) {
 	expectedStatusCode := http.StatusOK
 	expectedMessage := "Token can be deleted"
 
-	requestBody := &domain.Token{
+	requestBody := requestBody{
 		TokenString: accessToken,
 	}
 
@@ -258,7 +257,7 @@ func TestCanDeletedToken(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Failed to authenticate"
 
-	requestBody := &domain.Token{
+	requestBody := requestBody{
 		TokenString: accessToken,
 	}
 
@@ -279,7 +278,7 @@ func TestCanDeletedToken(t *testing.T) {
 }
 
 func TestGetAccessToken(t *testing.T) {
-	requestBody := &domain.User{
+	requestBody := requestBody{
 		UserID:   "testuser",
 		Password: "testpass",
 	}
