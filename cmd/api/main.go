@@ -18,8 +18,14 @@ func main() {
 	}
 	defer db.Close()
 
+	cdb, err := config.ConnectCacheDB()
+	if err != nil {
+		panic(err)
+	}
+	defer cdb.Close()
+
 	userPersistence := persistence.NewUserPersistence(db)
-	tokenPersistence := persistence.NewTokenPersistence()
+	tokenPersistence := persistence.NewTokenPersistence(cdb)
 
 	userUseCase := usecase.NewUserUseCase(userPersistence)
 	tokenUseCase := usecase.NewTokenUseCase(tokenPersistence)

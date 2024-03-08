@@ -1,20 +1,33 @@
 package persistence
 
-import "testing"
+import (
+	"testing"
+	"user-register-api/config"
+)
 
 var exampleUUID = "de5fe5d7-eec2-4fba-e071-fa2de7c1e440"
 
 func TestSaveToken(t *testing.T) {
-	tokenPersistence := NewTokenPersistence()
+	cdb, err := config.ConnectCacheDB()
+	if err != nil {
+		t.Error(err)
+	}
 
-	err := tokenPersistence.SaveToken(testUser.UserID, exampleUUID)
+	tokenPersistence := NewTokenPersistence(cdb)
+
+	err = tokenPersistence.SaveToken(testUser.UserID, exampleUUID)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
 func TestValidateToken(t *testing.T) {
-	tokenPersistence := NewTokenPersistence()
+	cdb, err := config.ConnectCacheDB()
+	if err != nil {
+		t.Error(err)
+	}
+
+	tokenPersistence := NewTokenPersistence(cdb)
 
 	token, err := tokenPersistence.ValidateToken(testUser.UserID)
 	if err != nil {
@@ -26,18 +39,28 @@ func TestValidateToken(t *testing.T) {
 }
 
 func TestDeleteToken(t *testing.T) {
-	tokenPersistence := NewTokenPersistence()
+	cdb, err := config.ConnectCacheDB()
+	if err != nil {
+		t.Error(err)
+	}
 
-	err := tokenPersistence.DeleteToken(testUser.UserID)
+	tokenPersistence := NewTokenPersistence(cdb)
+
+	err = tokenPersistence.DeleteToken(testUser.UserID)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
 func TestValidateTokenDeleted(t *testing.T) {
-	tokenPersistence := NewTokenPersistence()
+	cdb, err := config.ConnectCacheDB()
+	if err != nil {
+		t.Error(err)
+	}
 
-	_, err := tokenPersistence.ValidateToken(testUser.UserID)
+	tokenPersistence := NewTokenPersistence(cdb)
+
+	_, err = tokenPersistence.ValidateToken(testUser.UserID)
 	if err == nil {
 		t.Error("Token is not deleted")
 	}

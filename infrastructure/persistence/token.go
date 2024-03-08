@@ -3,26 +3,24 @@ package persistence
 import (
 	"context"
 	"time"
-	"user-register-api/config"
 
 	"user-register-api/domain/repository"
+
+	"github.com/redis/go-redis/v9"
 )
 
-type tokenPersistence struct{}
+type tokenPersistence struct {
+	*redis.Client
+}
 
-func NewTokenPersistence() repository.TokenRepository {
-	return &tokenPersistence{}
+func NewTokenPersistence(cdb *redis.Client) repository.TokenRepository {
+	return &tokenPersistence{cdb}
 }
 
 func (tp tokenPersistence) SaveToken(userID, tokenUUID string) error {
 	ctx := context.Background()
 
-	cdb, err := config.ConnectCacheDB()
-	if err != nil {
-		return err
-	}
-
-	err = cdb.Set(ctx, userID, tokenUUID, time.Hour).Err()
+	err := tp.Set(ctx, userID, tokenUUID, time.Hour).Err()
 	if err != nil {
 		return err
 	}
@@ -33,17 +31,12 @@ func (tp tokenPersistence) SaveToken(userID, tokenUUID string) error {
 func (tp tokenPersistence) ValidateToken(userID string) (string, error) {
 	ctx := context.Background()
 
-	cdb, err := config.ConnectCacheDB()
+	tokenUUID, err := tp.Get(ctx, userID).Result()
 	if err != nil {
 		return "", err
 	}
 
-	tokenUUID, err := cdb.Get(ctx, userID).Result()
-	if err != nil {
-		return "", err
-	}
-
-	err = cdb.Expire(ctx, userID, time.Hour).Err()
+	err = tp.Expire(ctx, userID, time.Hour).Err()
 	if err != nil {
 		return "", err
 	}
@@ -54,12 +47,7 @@ func (tp tokenPersistence) ValidateToken(userID string) (string, error) {
 func (tp tokenPersistence) DeleteToken(userID string) error {
 	ctx := context.Background()
 
-	cdb, err := config.ConnectCacheDB()
-	if err != nil {
-		return err
-	}
-
-	err = cdb.Del(ctx, userID).Err()
+	err := tp.Del(ctx, userID).Err()
 	if err != nil {
 		return err
 	}
