@@ -17,7 +17,7 @@ func TestPutUserBodyNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -41,7 +41,7 @@ func TestPutUserTokenNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -65,7 +65,7 @@ func TestPutUserUsernameNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -90,7 +90,7 @@ func TestPutUserTokenNotCorrect(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -120,7 +120,7 @@ func TestPutUserSuccess(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -130,8 +130,12 @@ func TestPutUserSuccess(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, "User can be acquired", expectedUser)
+	response, err := verifyExpectedResponse(resp, expectedStatusCode, "User can be acquired")
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	if response.User != *expectedUser {
+		t.Fatal("Username is not updated")
 	}
 }

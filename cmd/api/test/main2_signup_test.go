@@ -16,7 +16,7 @@ func TestSignupBodyNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -41,7 +41,7 @@ func TestSignupUserIDNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -66,7 +66,7 @@ func TestSignupPasswordNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -92,7 +92,7 @@ func TestSignupSuccessUsernameExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -117,7 +117,7 @@ func TestSignupSuccessUsernameNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -143,7 +143,7 @@ func TestSignupUserConflict(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}

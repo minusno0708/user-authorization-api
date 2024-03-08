@@ -20,6 +20,11 @@ type requestBody struct {
 	Password    string `json:"password"`
 }
 
+type responseBody struct {
+	User        domain.User `json:"user"`
+	TokenString string      `json:"token"`
+}
+
 type errorString struct {
 	message string
 }
@@ -51,34 +56,34 @@ func sendRequest(method string, endpoint string, sendingBody *bytes.Buffer) (*ht
 	return resp, nil
 }
 
-func verifyExpectedResponse(resp *http.Response, expectedStatusCode int, expectedMessage string, expectedUser *domain.User) error {
+func verifyExpectedResponse(resp *http.Response, expectedStatusCode int, expectedMessage string) (*responseBody, error) {
 	var response struct {
-		Message string      `json:"message"`
-		User    domain.User `json:"user"`
+		Message     string      `json:"message"`
+		User        domain.User `json:"user"`
+		TokenString string      `json:"token"`
 	}
 
 	if resp.StatusCode != expectedStatusCode {
-		return &errorString{message: fmt.Sprintf("Expected status code %v, got %v", expectedStatusCode, resp.StatusCode)}
+		return nil, &errorString{message: fmt.Sprintf("Expected status code %v, got %v", expectedStatusCode, resp.StatusCode)}
 	}
 
 	responseData, _ := ioutil.ReadAll(resp.Body)
 
 	err := json.Unmarshal(responseData, &response)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if response.Message != expectedMessage {
-		return &errorString{message: fmt.Sprintf("Expected message %v, got %v", expectedMessage, response.Message)}
+		return nil, &errorString{message: fmt.Sprintf("Expected message %v, got %v", expectedMessage, response.Message)}
 	}
 
-	if expectedUser != nil {
-		if response.User != *expectedUser {
-			return &errorString{message: fmt.Sprintf("Expected user %v, got %v", expectedUser, response.User)}
-		}
+	responseBody := &responseBody{
+		User:        response.User,
+		TokenString: response.TokenString,
 	}
 
-	return nil
+	return responseBody, nil
 }
 
 func TestConnectionApi(t *testing.T) {
@@ -90,7 +95,7 @@ func TestConnectionApi(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}

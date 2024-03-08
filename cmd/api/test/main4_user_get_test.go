@@ -18,7 +18,7 @@ func TestGetUserBodyNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -40,7 +40,7 @@ func TestGetUserTokenNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -64,7 +64,7 @@ func TestGetUserTokenNotCorrect(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -92,8 +92,12 @@ func TestGetUserSuccess(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, expectedUser)
+	response, err := verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	if response.User != *expectedUser {
+		t.Fatal("User does not match")
 	}
 }

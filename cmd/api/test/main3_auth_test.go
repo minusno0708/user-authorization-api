@@ -19,7 +19,7 @@ func TestSigninBodyNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,7 +43,7 @@ func TestSigninUserIDNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -67,7 +67,7 @@ func TestSigninPasswordNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -92,7 +92,7 @@ func TestSigninUserNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -117,7 +117,7 @@ func TestSigninPasswordNotCorrect(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -142,25 +142,7 @@ func TestSigninSuccess(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var response struct {
-		Message     string `json:"message"`
-		TokenString string `json:"token"`
-	}
-
-	if resp.StatusCode != expectedStatusCode {
-		t.Fatalf("Expected status code %v, got %v", expectedStatusCode, resp.StatusCode)
-	}
-
-	responseData, _ := ioutil.ReadAll(resp.Body)
-
-	err = json.Unmarshal(responseData, &response)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if response.Message != expectedMessage {
-		t.Fatalf("Expected message %v, got %v", expectedMessage, response.Message)
-	}
+	response, err := verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 
 	if response.TokenString == "" {
 		t.Fatal("Token is empty")
@@ -178,7 +160,7 @@ func TestSignoutBodyNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -200,7 +182,7 @@ func TestSignoutTokenNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -223,7 +205,7 @@ func TestSignoutIncorrectToken(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -247,7 +229,7 @@ func TestSignoutSuccess(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -271,7 +253,7 @@ func TestCanDeletedToken(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage, nil)
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
 	if err != nil {
 		t.Fatal(err)
 	}
