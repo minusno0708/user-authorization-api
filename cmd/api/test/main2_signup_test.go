@@ -11,7 +11,7 @@ func TestSignupBodyNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusBadRequest
 	expectedMessage := "Body does not exist"
 
-	resp, err := sendRequest("POST", endpoint+"/signup", nil)
+	resp, err := sendRequest("POST", endpoint+"/signup", nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -36,7 +36,7 @@ func TestSignupUserIDNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("POST", endpoint+"/signup", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("POST", endpoint+"/signup", nil, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -61,7 +61,7 @@ func TestSignupPasswordNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("POST", endpoint+"/signup", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("POST", endpoint+"/signup", nil, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -87,7 +87,7 @@ func TestSignupSuccessUsernameExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("POST", endpoint+"/signup", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("POST", endpoint+"/signup", nil, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -112,7 +112,7 @@ func TestSignupSuccessUsernameNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("POST", endpoint+"/signup", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("POST", endpoint+"/signup", nil, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -138,7 +138,7 @@ func TestSignupUserConflict(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("POST", endpoint+"/signup", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("POST", endpoint+"/signup", nil, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}

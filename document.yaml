@@ -2,7 +2,7 @@ openapi: '3.0.0'
 
 info:
   version: "1.0.0"
-  title: User-Register-API
+  title: User-Authorization-API
   
 tags:
   - name: user
@@ -117,19 +117,13 @@ paths:
         - user
       description: |
         ユーザー情報を取得する
-      requestBody:
-        description: アクセストークン
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - token
-              properties:
-                token:
-                  type: "string"
-                  example: "xxxxxxxxxxxxxxxxxxxxxxxx"
+      parameters:
+        - name: Token
+          in: header
+          required: true
+          schema:
+            type: string
+          description: アクセストークン
 
       responses:
         200:
@@ -151,31 +145,14 @@ paths:
                       username:
                         type: string
                         example: "username"
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BodyDoesNotExistError'
-              examples:
-                response1:
-                  summary: Bodyが存在しない場合
-                  value:
-                    message: Body does not exist
         401:
           description: Unauthorized
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/BodyValidationError'
-                  - $ref: '#/components/schemas/FailedAuthenticateError'
+                $ref: '#/components/schemas/FailedAuthenticateError'
               examples:
                 response1:
-                  summary: Bodyの形式が正しくない場合
-                  value:
-                    message: Body is not valid
-                response2:
                   summary: 認証に失敗した場合
                   value:
                     message: Failed to authenticate
@@ -196,8 +173,15 @@ paths:
         - user
       description: |
         ユーザー情報を更新する
+      parameters:
+        - name: Token
+          in: header
+          required: true
+          schema:
+            type: string
+          description: アクセストークン
       requestBody:
-        description: ユーザー情報とアクセストークン
+        description: 新規ユーザー名
         required: true
         content:
           application/json:
@@ -205,14 +189,10 @@ paths:
               type: object
               required:
                 - username
-                - token
               properties:
                 username:
                   type: "string"
                   example: "new_username"
-                token:
-                  type: "string"
-                  example: "xxxxxxxxxxxxxxxxxxxxxxxx"
 
       responses:
         200:
@@ -269,19 +249,13 @@ paths:
         - user
       description: |
         ユーザー情報を削除する
-      requestBody:
-        description: アクセストークン
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - token
-              properties:
-                token:
-                  type: "string"
-                  example: "xxxxxxxxxxxxxxxxxxxxxxxx"
+      parameters:
+        - name: Token
+          in: header
+          required: true
+          schema:
+            type: string
+          description: アクセストークン
       
       responses:
         200:
@@ -294,31 +268,14 @@ paths:
                   message:
                     type: string
                     example: "User can be deleted"
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BodyDoesNotExistError'
-              examples:
-                response1:
-                  summary: Bodyが存在しない場合
-                  value:
-                    message: Body does not exist
         401:
           description: Unauthorized
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/BodyValidationError'
-                  - $ref: '#/components/schemas/FailedAuthenticateError'
+                $ref: '#/components/schemas/FailedAuthenticateError'
               examples:
                 response1:
-                  summary: Bodyの形式が正しくない場合
-                  value:
-                    message: Body is not valid
-                response2:
                   summary: 認証に失敗した場合
                   value:
                     message: Failed to authenticate
@@ -407,20 +364,13 @@ paths:
         - auth
       description: |
         ログアウト用のエンドポイント
-
-      requestBody:
-        description: トークン
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - token
-              properties:
-                token:
-                  type: "string"
-                  example: ""
+      parameters:
+        - name: Token
+          in: header
+          required: true
+          schema:
+            type: string
+          description: アクセストークン
 
       responses:
         200:
@@ -433,31 +383,14 @@ paths:
                   message:
                     type: string
                     example: "Token can be deleted"
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BodyDoesNotExistError'
-              examples:
-                response1:
-                  summary: Bodyが存在しない場合
-                  value:
-                    message: Body does not exist
         401:
           description: Unauthorized
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/BodyValidationError'
-                  - $ref: '#/components/schemas/UserOrPassIncorrectError'
+                $ref: '#/components/schemas/FailedAuthenticateError'
               examples:
                 response1:
-                  summary: Bodyの形式が正しくない場合
-                  value:
-                    message: Body is not valid
-                response2:
                   summary: 認証に失敗した場合
                   value:
                     message: Failed to authenticate

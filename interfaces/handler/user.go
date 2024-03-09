@@ -66,25 +66,9 @@ func (uh userHandler) HandleUserSignup(c *gin.Context) {
 }
 
 func (uh userHandler) HandleUserGet(c *gin.Context) {
-	var requestBody struct {
-		TokenString string `json:"token"`
-	}
+	tokenString := c.GetHeader("Token")
 
-	if err := c.ShouldBindJSON(&requestBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Body does not exist",
-		})
-		return
-	}
-
-	if requestBody.TokenString == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Body is not valid",
-		})
-		return
-	}
-
-	userID, err := uh.tokenUseCase.ValidateToken(requestBody.TokenString)
+	userID, err := uh.tokenUseCase.ValidateToken(tokenString)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Failed to authenticate",
@@ -112,7 +96,6 @@ func (uh userHandler) HandleUserGet(c *gin.Context) {
 func (uh userHandler) HandleUserPut(c *gin.Context) {
 	var requestBody struct {
 		NewUsername string `json:"username"`
-		TokenString string `json:"token"`
 	}
 
 	if err := c.ShouldBindJSON(&requestBody); err != nil {
@@ -122,14 +105,16 @@ func (uh userHandler) HandleUserPut(c *gin.Context) {
 		return
 	}
 
-	if requestBody.TokenString == "" || requestBody.NewUsername == "" {
+	if requestBody.NewUsername == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Body is not valid",
 		})
 		return
 	}
 
-	userID, err := uh.tokenUseCase.ValidateToken(requestBody.TokenString)
+	tokenString := c.GetHeader("Token")
+
+	userID, err := uh.tokenUseCase.ValidateToken(tokenString)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Failed to authenticate",
@@ -151,25 +136,9 @@ func (uh userHandler) HandleUserPut(c *gin.Context) {
 }
 
 func (uh userHandler) HandleUserDelete(c *gin.Context) {
-	var requestBody struct {
-		TokenString string `json:"token"`
-	}
+	tokenString := c.GetHeader("Token")
 
-	if err := c.ShouldBindJSON(&requestBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Body does not exist",
-		})
-		return
-	}
-
-	if requestBody.TokenString == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Body is not valid",
-		})
-		return
-	}
-
-	userID, err := uh.tokenUseCase.ValidateToken(requestBody.TokenString)
+	userID, err := uh.tokenUseCase.ValidateToken(tokenString)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Failed to authenticate",
@@ -185,7 +154,7 @@ func (uh userHandler) HandleUserDelete(c *gin.Context) {
 		return
 	}
 
-	err = uh.tokenUseCase.DeleteToken(requestBody.TokenString)
+	err = uh.tokenUseCase.DeleteToken(tokenString)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Token can not be deleted",
