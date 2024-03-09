@@ -33,7 +33,12 @@ func (e *errorString) Error() string {
 	return e.message
 }
 
-func sendRequest(method string, endpoint string, sendingBody *bytes.Buffer) (*http.Response, error) {
+type header struct {
+	key   string
+	value string
+}
+
+func sendRequest(method string, endpoint string, header []*header, sendingBody *bytes.Buffer) (*http.Response, error) {
 	var req *http.Request
 	var err error
 
@@ -41,6 +46,10 @@ func sendRequest(method string, endpoint string, sendingBody *bytes.Buffer) (*ht
 		req, err = http.NewRequest(method, endpoint, sendingBody)
 	} else {
 		req, err = http.NewRequest(method, endpoint, nil)
+	}
+
+	for _, h := range header {
+		req.Header.Set(h.key, h.value)
 	}
 
 	if err != nil {
