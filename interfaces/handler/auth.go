@@ -76,24 +76,9 @@ func (ah authHandler) HandleSignin(c *gin.Context) {
 }
 
 func (ah authHandler) HandleSignout(c *gin.Context) {
-	var requestBody struct {
-		TokenString string `json:"token"`
-	}
+	tokenString := c.GetHeader("Token")
 
-	if err := c.ShouldBindJSON(&requestBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Body does not exist",
-		})
-		return
-	}
-	if requestBody.TokenString == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Body is not valid",
-		})
-		return
-	}
-
-	_, err := ah.tokenUseCase.ValidateToken(requestBody.TokenString)
+	_, err := ah.tokenUseCase.ValidateToken(tokenString)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Failed to authenticate",
@@ -101,7 +86,7 @@ func (ah authHandler) HandleSignout(c *gin.Context) {
 		return
 	}
 
-	err = ah.tokenUseCase.DeleteToken(requestBody.TokenString)
+	err = ah.tokenUseCase.DeleteToken(tokenString)
 	if err != nil {
 		c.JSON(http.StatusServiceUnavailable, gin.H{
 			"message": "Token can not be deleted",
