@@ -48,8 +48,10 @@ func sendRequest(method string, endpoint string, header []*header, sendingBody *
 		req, err = http.NewRequest(method, endpoint, nil)
 	}
 
-	for _, h := range header {
-		req.Header.Set(h.key, h.value)
+	if header != nil {
+		for _, h := range header {
+			req.Header.Set(h.key, h.value)
+		}
 	}
 
 	if err != nil {
