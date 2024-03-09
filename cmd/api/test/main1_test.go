@@ -38,6 +38,17 @@ type header struct {
 	value string
 }
 
+func setToken(tokenString string) *header {
+	return &header{
+		key:   "Token",
+		value: tokenString,
+	}
+}
+
+func (h *header) ToArray() []*header {
+	return []*header{h}
+}
+
 func sendRequest(method string, endpoint string, header []*header, sendingBody *bytes.Buffer) (*http.Response, error) {
 	var req *http.Request
 	var err error
@@ -48,10 +59,8 @@ func sendRequest(method string, endpoint string, header []*header, sendingBody *
 		req, err = http.NewRequest(method, endpoint, nil)
 	}
 
-	if header != nil {
-		for _, h := range header {
-			req.Header.Set(h.key, h.value)
-		}
+	for _, h := range header {
+		req.Header.Set(h.key, h.value)
 	}
 
 	if err != nil {
@@ -101,7 +110,7 @@ func TestConnectionApi(t *testing.T) {
 	expectedStatusCode := http.StatusOK
 	expectedMessage := "Connection Successful"
 
-	resp, err := sendRequest("GET", endpoint, nil)
+	resp, err := sendRequest("GET", endpoint, nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}

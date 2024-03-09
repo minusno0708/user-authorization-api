@@ -14,7 +14,7 @@ func TestSigninBodyNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusBadRequest
 	expectedMessage := "Body does not exist"
 
-	resp, err := sendRequest("POST", endpoint+"/signin", nil)
+	resp, err := sendRequest("POST", endpoint+"/signin", nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -38,7 +38,7 @@ func TestSigninUserIDNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("POST", endpoint+"/signin", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("POST", endpoint+"/signin", nil, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -62,7 +62,7 @@ func TestSigninPasswordNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("POST", endpoint+"/signin", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("POST", endpoint+"/signin", nil, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -87,7 +87,7 @@ func TestSigninUserNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("POST", endpoint+"/signin", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("POST", endpoint+"/signin", nil, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -112,7 +112,7 @@ func TestSigninPasswordNotCorrect(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("POST", endpoint+"/signin", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("POST", endpoint+"/signin", nil, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -137,12 +137,15 @@ func TestSigninSuccess(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("POST", endpoint+"/signin", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("POST", endpoint+"/signin", nil, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	response, err := verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	if response.TokenString == "" {
 		t.Fatal("Token is empty")
@@ -151,33 +154,11 @@ func TestSigninSuccess(t *testing.T) {
 	accessToken = response.TokenString
 }
 
-func TestSignoutBodyNotExist(t *testing.T) {
-	expectedStatusCode := http.StatusBadRequest
-	expectedMessage := "Body does not exist"
-
-	resp, err := sendRequest("DELETE", endpoint+"/signout", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
 func TestSignoutTokenNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
-	expectedMessage := "Body is not valid"
+	expectedMessage := "Failed to authenticate"
 
-	requestBody := requestBody{}
-
-	jsonString, err := json.Marshal(requestBody)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	resp, err := sendRequest("DELETE", endpoint+"/signout", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("DELETE", endpoint+"/signout", nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -192,15 +173,9 @@ func TestSignoutIncorrectToken(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Failed to authenticate"
 
-	requestBody := requestBody{
-		TokenString: "incorrect_token",
-	}
-	jsonString, err := json.Marshal(requestBody)
-	if err != nil {
-		t.Fatal(err)
-	}
+	header := setToken("incorrect_token").ToArray()
 
-	resp, err := sendRequest("DELETE", endpoint+"/signout", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("DELETE", endpoint+"/signout", header, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -215,16 +190,9 @@ func TestSignoutSuccess(t *testing.T) {
 	expectedStatusCode := http.StatusOK
 	expectedMessage := "Token can be deleted"
 
-	requestBody := requestBody{
-		TokenString: accessToken,
-	}
+	header := setToken(accessToken).ToArray()
 
-	jsonString, err := json.Marshal(requestBody)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	resp, err := sendRequest("DELETE", endpoint+"/signout", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("DELETE", endpoint+"/signout", header, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -239,16 +207,9 @@ func TestCanDeletedToken(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Failed to authenticate"
 
-	requestBody := requestBody{
-		TokenString: accessToken,
-	}
+	header := setToken(accessToken).ToArray()
 
-	jsonString, err := json.Marshal(requestBody)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	resp, err := sendRequest("DELETE", endpoint+"/signout", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("DELETE", endpoint+"/signout", header, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -270,7 +231,7 @@ func TestGetAccessToken(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("POST", endpoint+"/signin", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("POST", endpoint+"/signin", nil, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}

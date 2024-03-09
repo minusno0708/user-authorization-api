@@ -1,41 +1,17 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"net/http"
 	"testing"
 
 	"user-register-api/domain"
 )
 
-func TestGetUserBodyNotExist(t *testing.T) {
-	expectedStatusCode := http.StatusBadRequest
-	expectedMessage := "Body does not exist"
-
-	resp, err := sendRequest("GET", endpoint+"/user", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
 func TestGetUserTokenNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
-	expectedMessage := "Body is not valid"
+	expectedMessage := "Failed to authenticate"
 
-	requestBody := requestBody{}
-
-	jsonString, err := json.Marshal(requestBody)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	resp, err := sendRequest("GET", endpoint+"/user", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("GET", endpoint+"/user", nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -50,16 +26,9 @@ func TestGetUserTokenNotCorrect(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Failed to authenticate"
 
-	requestBody := requestBody{
-		TokenString: "incorrect token string",
-	}
+	header := setToken("incorrect token").ToArray()
 
-	jsonString, err := json.Marshal(requestBody)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	resp, err := sendRequest("GET", endpoint+"/user", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("GET", endpoint+"/user", header, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -78,16 +47,9 @@ func TestGetUserSuccess(t *testing.T) {
 		Username: "testname",
 	}
 
-	requestBody := requestBody{
-		TokenString: accessToken,
-	}
+	header := setToken(accessToken).ToArray()
 
-	jsonString, err := json.Marshal(requestBody)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	resp, err := sendRequest("GET", endpoint+"/user", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("GET", endpoint+"/user", header, nil)
 	if err != nil {
 		t.Fatal(err)
 	}

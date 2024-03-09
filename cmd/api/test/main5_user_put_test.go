@@ -12,31 +12,9 @@ func TestPutUserBodyNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusBadRequest
 	expectedMessage := "Body does not exist"
 
-	resp, err := sendRequest("PUT", endpoint+"/user", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
+	header := setToken(accessToken).ToArray()
 
-	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestPutUserTokenNotExist(t *testing.T) {
-	expectedStatusCode := http.StatusUnauthorized
-	expectedMessage := "Body is not valid"
-
-	requestBody := requestBody{
-		Username: "testname",
-	}
-
-	jsonString, err := json.Marshal(requestBody)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	resp, err := sendRequest("PUT", endpoint+"/user", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("PUT", endpoint+"/user", header, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -51,8 +29,32 @@ func TestPutUserUsernameNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Body is not valid"
 
+	requestBody := requestBody{}
+
+	jsonString, err := json.Marshal(requestBody)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	header := setToken(accessToken).ToArray()
+
+	resp, err := sendRequest("PUT", endpoint+"/user", header, bytes.NewBuffer(jsonString))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestPutUserTokenNotExist(t *testing.T) {
+	expectedStatusCode := http.StatusUnauthorized
+	expectedMessage := "Failed to authenticate"
+
 	requestBody := requestBody{
-		TokenString: accessToken,
+		Username: "testname",
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -60,7 +62,7 @@ func TestPutUserUsernameNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("PUT", endpoint+"/user", bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("PUT", endpoint+"/user", nil, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -76,8 +78,7 @@ func TestPutUserTokenNotCorrect(t *testing.T) {
 	expectedMessage := "Failed to authenticate"
 
 	requestBody := requestBody{
-		Username:    "testname",
-		TokenString: "incorrect token string",
+		Username: "testname",
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -85,7 +86,9 @@ func TestPutUserTokenNotCorrect(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("PUT", endpoint+"/user", bytes.NewBuffer(jsonString))
+	header := setToken("incorrect token").ToArray()
+
+	resp, err := sendRequest("PUT", endpoint+"/user", header, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -106,8 +109,7 @@ func TestPutUserSuccess(t *testing.T) {
 	}
 
 	requestBody := requestBody{
-		Username:    "testname_updated",
-		TokenString: accessToken,
+		Username: "testname_updated",
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -115,7 +117,9 @@ func TestPutUserSuccess(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("PUT", endpoint+"/user", bytes.NewBuffer(jsonString))
+	header := setToken(accessToken).ToArray()
+
+	resp, err := sendRequest("PUT", endpoint+"/user", header, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -125,7 +129,7 @@ func TestPutUserSuccess(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err = sendRequest("GET", endpoint+"/user", bytes.NewBuffer(jsonString))
+	resp, err = sendRequest("GET", endpoint+"/user", header, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
