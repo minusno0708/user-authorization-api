@@ -25,7 +25,7 @@ func NewAuthHandler(uu usecase.UserUseCase, tu usecase.TokenUseCase) AuthHandler
 	}
 }
 
-func (ah authHandler) HandleSignin(c *gin.Context) {
+func (ah authHandler) HandleLogin(c *gin.Context) {
 	var requestBody struct {
 		UserID   string `json:"user_id"`
 		Password string `json:"password"`
