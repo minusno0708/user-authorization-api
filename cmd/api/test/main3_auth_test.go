@@ -158,7 +158,7 @@ func TestLogoutTokenNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Failed to authenticate"
 
-	resp, err := sendRequest("DELETE", endpoint+"/Logout", nil, nil)
+	resp, err := sendRequest("DELETE", endpoint+"/logout", nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -175,7 +175,7 @@ func TestLogoutIncorrectToken(t *testing.T) {
 
 	header := setToken("incorrect_token").ToArray()
 
-	resp, err := sendRequest("DELETE", endpoint+"/Logout", header, nil)
+	resp, err := sendRequest("DELETE", endpoint+"/logout", header, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -192,7 +192,7 @@ func TestLogoutSuccess(t *testing.T) {
 
 	header := setToken(accessToken).ToArray()
 
-	resp, err := sendRequest("DELETE", endpoint+"/Logout", header, nil)
+	resp, err := sendRequest("DELETE", endpoint+"/logout", header, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -209,7 +209,7 @@ func TestCanDeletedToken(t *testing.T) {
 
 	header := setToken(accessToken).ToArray()
 
-	resp, err := sendRequest("DELETE", endpoint+"/Logout", header, nil)
+	resp, err := sendRequest("DELETE", endpoint+"/logout", header, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
