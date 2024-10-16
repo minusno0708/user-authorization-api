@@ -87,7 +87,7 @@ func TestUserCanBeDeleted(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("POST", endpoint+"/signin", nil, bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("POST", endpoint+"/login", nil, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}

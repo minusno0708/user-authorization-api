@@ -9,8 +9,8 @@ import (
 )
 
 type AuthHandler interface {
-	HandleSignin(c *gin.Context)
-	HandleSignout(c *gin.Context)
+	HandleLogin(c *gin.Context)
+	HandleLogout(c *gin.Context)
 }
 
 type authHandler struct {
@@ -75,7 +75,7 @@ func (ah authHandler) HandleSignin(c *gin.Context) {
 	})
 }
 
-func (ah authHandler) HandleSignout(c *gin.Context) {
+func (ah authHandler) HandleLogout(c *gin.Context) {
 	tokenString := c.GetHeader("Token")
 
 	_, err := ah.tokenUseCase.ValidateToken(tokenString)
