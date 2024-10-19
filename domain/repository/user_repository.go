@@ -6,7 +6,8 @@ import (
 
 type UserRepository interface {
 	InsertUser(user *domain.User) error
-	FindUserByUserID(userID string) (*domain.User, error)
-	UpdateUsername(userID string, username string) error
+	FindUserByID(userID string) (*domain.User, error)
+	FindUserByUsername(username string) (*domain.User, error)
+	UpdateUser(usreID, username, email string) error
 	DeleteUser(userID string) error
 }

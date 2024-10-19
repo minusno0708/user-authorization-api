@@ -15,8 +15,8 @@ const endpoint = "http://localhost:8080"
 
 type requestBody struct {
 	TokenString string `json:"token"`
-	UserID      string `json:"user_id"`
 	Username    string `json:"username"`
+	Email       string `json:"email"`
 	Password    string `json:"password"`
 }
 

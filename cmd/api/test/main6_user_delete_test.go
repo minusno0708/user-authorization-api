@@ -78,7 +78,7 @@ func TestUserCanBeDeleted(t *testing.T) {
 	expectedMessage := "User ID or password is incorrect"
 
 	requestBody := requestBody{
-		UserID:   "testuser",
+		Username: "testuser",
 		Password: "testpass",
 	}
 

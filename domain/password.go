@@ -1,25 +1,38 @@
 package domain
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
+)
 
 type Password struct {
-	value string
+	ID             string `json:"id"`
+	UserID         string `json:"user_id"`
+	HashedPassword string `json:"hashed_password"`
 }
 
-func NewPassword(pwd string) *Password {
-	return &Password{value: pwd}
+func NewPassword(userId, pwd string) (*Password, error) {
+	hashedPwd, err := ToHash(pwd)
+	if err != nil {
+		return nil, err
+	}
+	return &Password{
+		ID:             uuid.New().String(),
+		UserID:         userId,
+		HashedPassword: hashedPwd,
+	}, nil
 }
 
-func (pwd *Password) ToHash() (string, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(pwd.value), bcrypt.DefaultCost)
+func ToHash(rawPwd string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(rawPwd), bcrypt.DefaultCost)
 	if err != nil {
 		return "", err
 	}
 	return string(hash), nil
 }
 
-func (pwd *Password) Compare(hashPwd string) error {
-	err := bcrypt.CompareHashAndPassword([]byte(hashPwd), []byte(pwd.value))
+func (pwd *Password) Validate(rawPwd string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(pwd.HashedPassword), []byte(rawPwd))
 	if err != nil {
 		return err
 	}

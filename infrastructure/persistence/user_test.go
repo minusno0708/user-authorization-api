@@ -8,9 +8,8 @@ import (
 )
 
 var testUser = domain.User{
-	UserID:   "testuser_db",
-	Username: "testuser_db",
-	Password: "test_password",
+	Username: "testuser_name",
+	Email:    "testuser_email",
 }
 
 func TestInsertUser(t *testing.T) {
@@ -41,7 +40,7 @@ func TestInsertUserDuplicate(t *testing.T) {
 	}
 }
 
-func TestFindUserByUserID(t *testing.T) {
+func TestFindUserByUsername(t *testing.T) {
 	db, err := config.ConnectDB()
 	if err != nil {
 		t.Error(err)
@@ -49,17 +48,35 @@ func TestFindUserByUserID(t *testing.T) {
 	defer db.Close()
 	userPersistence := NewUserPersistence(db)
 
-	user, err := userPersistence.FindUserByUserID(testUser.UserID)
+	user, err := userPersistence.FindUserByUsername(testUser.Username)
 	if err != nil {
 		t.Error(err)
-	}
-	if user.UserID != testUser.UserID {
-		t.Errorf("UserID is not match")
 	}
 	if user.Username != testUser.Username {
 		t.Errorf("Username is not match")
 	}
-	if user.Password != testUser.Password {
+	if user.Email != testUser.Email {
+		t.Errorf("Password is not match")
+	}
+	testUser.ID = user.ID
+}
+
+func TestFindUserByID(t *testing.T) {
+	db, err := config.ConnectDB()
+	if err != nil {
+		t.Error(err)
+	}
+	defer db.Close()
+	userPersistence := NewUserPersistence(db)
+
+	user, err := userPersistence.FindUserByID(testUser.ID)
+	if err != nil {
+		t.Error(err)
+	}
+	if user.Username != testUser.Username {
+		t.Errorf("Username is not match")
+	}
+	if user.Email != testUser.Email {
 		t.Errorf("Password is not match")
 	}
 }
@@ -72,18 +89,25 @@ func TestUpdateUsername(t *testing.T) {
 	defer db.Close()
 	userPersistence := NewUserPersistence(db)
 
-	updatedName := "testuser_db_updated"
-	err = userPersistence.UpdateUsername(testUser.UserID, updatedName)
+	updatedName := "testuser_name_updated"
+	updatedEmail := "testuser_email_updated"
+	err = userPersistence.UpdateUser(testUser.ID, updatedName, updatedEmail)
 	if err != nil {
 		t.Error(err)
 	}
 
-	user, err := userPersistence.FindUserByUserID(testUser.UserID)
+	user, err := userPersistence.FindUserByID(testUser.ID)
 	if err != nil {
 		t.Error(err)
 	}
+	if user.ID != testUser.ID {
+		t.Errorf("Unmatched user ID")
+	}
 	if user.Username != updatedName {
 		t.Errorf("Failed to update username")
+	}
+	if user.Email != updatedEmail {
+		t.Errorf("Failed to update email")
 	}
 }
 
@@ -95,8 +119,13 @@ func TestDeleteUser(t *testing.T) {
 	defer db.Close()
 	userPersistence := NewUserPersistence(db)
 
-	err = userPersistence.DeleteUser(testUser.UserID)
+	err = userPersistence.DeleteUser(testUser.ID)
 	if err != nil {
 		t.Error(err)
+	}
+
+	_, err = userPersistence.FindUserByUsername(testUser.Username)
+	if err == nil {
+		t.Error("Expected error, got nil")
 	}
 }

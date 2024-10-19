@@ -25,9 +25,10 @@ func main() {
 	defer cdb.Close()
 
 	userPersistence := persistence.NewUserPersistence(db)
+	passwordPersistence := persistence.NewPasswordPersistence(db)
 	tokenPersistence := persistence.NewTokenPersistence(cdb)
 
-	userUseCase := usecase.NewUserUseCase(userPersistence)
+	userUseCase := usecase.NewUserUseCase(userPersistence, passwordPersistence)
 	tokenUseCase := usecase.NewTokenUseCase(tokenPersistence)
 
 	userHandler := handler.NewUserHandler(userUseCase, tokenUseCase)

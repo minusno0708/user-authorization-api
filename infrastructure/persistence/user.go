@@ -17,10 +17,10 @@ func NewUserPersistence(db *sql.DB) repository.UserRepository {
 
 func (up userPersistence) InsertUser(user *domain.User) error {
 	_, err := up.Exec(
-		"INSERT INTO users (user_id, username, password) VALUES (?, ?, ?)",
-		user.UserID,
+		"INSERT INTO users (id, username, email) VALUES (?, ?, ?)",
+		user.ID,
 		user.Username,
-		user.Password,
+		user.Email,
 	)
 	if err != nil {
 		return err
@@ -29,15 +29,15 @@ func (up userPersistence) InsertUser(user *domain.User) error {
 	return nil
 }
 
-func (up userPersistence) FindUserByUserID(userID string) (*domain.User, error) {
+func (up userPersistence) FindUserByID(userID string) (*domain.User, error) {
 	user := domain.User{}
 	err := up.QueryRow(
-		"SELECT user_id, username, password FROM users WHERE user_id = ?",
+		"SELECT id, username, email FROM users WHERE id = ?",
 		userID,
 	).Scan(
-		&user.UserID,
+		&user.ID,
 		&user.Username,
-		&user.Password,
+		&user.Email,
 	)
 	if err != nil {
 		return &user, err
@@ -46,10 +46,28 @@ func (up userPersistence) FindUserByUserID(userID string) (*domain.User, error) 
 	return &user, nil
 }
 
-func (up userPersistence) UpdateUsername(userID, username string) error {
-	_, err := up.Exec(
-		"UPDATE users SET username = ? WHERE user_id = ?",
+func (up userPersistence) FindUserByUsername(username string) (*domain.User, error) {
+	user := domain.User{}
+	err := up.QueryRow(
+		"SELECT id, username, email FROM users WHERE username = ?",
 		username,
+	).Scan(
+		&user.ID,
+		&user.Username,
+		&user.Email,
+	)
+	if err != nil {
+		return &user, err
+	}
+
+	return &user, nil
+}
+
+func (up userPersistence) UpdateUser(userID, username, email string) error {
+	_, err := up.Exec(
+		"UPDATE users SET username = ?, email = ? WHERE id = ?",
+		username,
+		email,
 		userID,
 	)
 	if err != nil {
@@ -61,7 +79,7 @@ func (up userPersistence) UpdateUsername(userID, username string) error {
 
 func (up userPersistence) DeleteUser(userID string) error {
 	_, err := up.Exec(
-		"DELETE FROM users WHERE user_id = ?",
+		"DELETE FROM users WHERE id = ?",
 		userID,
 	)
 	if err != nil {

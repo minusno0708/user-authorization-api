@@ -1,19 +1,20 @@
 package domain
 
+import (
+	"github.com/google/uuid"
+)
+
 type User struct {
-	UserID   string `json:"user_id"`
-	Username string `json:"username"`
-	Password string `json:"password"`
+	ID        string `json:"id"`
+	Username  string `json:"username"`
+	Email     string `json:"email"`
+	IsDeleted bool   `json:"is_deleted"`
 }
 
-func NewUser(userID, username, password string) *User {
-	if username == "" {
-		username = userID
-	}
-
+func NewUser(username, email string) *User {
 	return &User{
-		UserID:   userID,
+		ID:       uuid.New().String(),
 		Username: username,
-		Password: password,
+		Email:    email,
 	}
 }
