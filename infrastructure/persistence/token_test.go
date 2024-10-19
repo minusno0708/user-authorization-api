@@ -15,7 +15,7 @@ func TestSaveToken(t *testing.T) {
 
 	tokenPersistence := NewTokenPersistence(cdb)
 
-	err = tokenPersistence.SaveToken(testUser.UserID, exampleUUID)
+	err = tokenPersistence.SaveToken(testUser.ID, exampleUUID)
 	if err != nil {
 		t.Error(err)
 	}
@@ -29,7 +29,7 @@ func TestValidateToken(t *testing.T) {
 
 	tokenPersistence := NewTokenPersistence(cdb)
 
-	token, err := tokenPersistence.ValidateToken(testUser.UserID)
+	token, err := tokenPersistence.ValidateToken(testUser.ID)
 	if err != nil {
 		t.Error(err)
 	}
@@ -46,7 +46,7 @@ func TestDeleteToken(t *testing.T) {
 
 	tokenPersistence := NewTokenPersistence(cdb)
 
-	err = tokenPersistence.DeleteToken(testUser.UserID)
+	err = tokenPersistence.DeleteToken(testUser.ID)
 	if err != nil {
 		t.Error(err)
 	}
@@ -60,7 +60,7 @@ func TestValidateTokenDeleted(t *testing.T) {
 
 	tokenPersistence := NewTokenPersistence(cdb)
 
-	_, err = tokenPersistence.ValidateToken(testUser.UserID)
+	_, err = tokenPersistence.ValidateToken(testUser.ID)
 	if err == nil {
 		t.Error("Token is not deleted")
 	}

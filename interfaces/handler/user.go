@@ -30,12 +30,13 @@ func NewUserHandler(uu usecase.UserUseCase, tu usecase.TokenUseCase) UserHandler
 type responseUser struct {
 	UserID   string `json:"user_id"`
 	Username string `json:"username"`
+	Email    string `json:"email"`
 }
 
 func (uh userHandler) HandleUserSignup(c *gin.Context) {
 	var requestBody struct {
-		UserID   string `json:"user_id"`
 		Username string `json:"username"`
+		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
 
@@ -45,14 +46,14 @@ func (uh userHandler) HandleUserSignup(c *gin.Context) {
 		})
 		return
 	}
-	if requestBody.UserID == "" || requestBody.Password == "" {
+	if requestBody.Username == "" || requestBody.Email == "" || requestBody.Password == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Body is not valid",
 		})
 		return
 	}
 
-	err := uh.userUseCase.InsertUser(requestBody.UserID, requestBody.Username, requestBody.Password)
+	err := uh.userUseCase.InsertUser(requestBody.Username, requestBody.Email, requestBody.Password)
 	if err != nil {
 		c.JSON(http.StatusConflict, gin.H{
 			"message": "User already exists",
@@ -87,15 +88,17 @@ func (uh userHandler) HandleUserGet(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "User can be acquired",
 		"user": &responseUser{
-			UserID:   user.UserID,
+			UserID:   user.ID,
 			Username: user.Username,
+			Email:    user.Email,
 		},
 	})
 }
 
 func (uh userHandler) HandleUserPut(c *gin.Context) {
 	var requestBody struct {
-		NewUsername string `json:"username"`
+		UpdateUsername string `json:"username"`
+		UpdateEmail    string `json:"email"`
 	}
 
 	if err := c.ShouldBindJSON(&requestBody); err != nil {
@@ -105,7 +108,7 @@ func (uh userHandler) HandleUserPut(c *gin.Context) {
 		return
 	}
 
-	if requestBody.NewUsername == "" {
+	if requestBody.UpdateUsername == "" && requestBody.UpdateEmail == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Body is not valid",
 		})
@@ -122,7 +125,7 @@ func (uh userHandler) HandleUserPut(c *gin.Context) {
 		return
 	}
 
-	err = uh.userUseCase.UpdateUsername(userID, requestBody.NewUsername)
+	err = uh.userUseCase.UpdateUsername(userID, requestBody.UpdateUsername, requestBody.UpdateEmail)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "User can not be updated",

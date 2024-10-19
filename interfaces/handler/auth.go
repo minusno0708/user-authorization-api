@@ -2,15 +2,14 @@ package handler
 
 import (
 	"net/http"
-	"user-register-api/domain"
 	"user-register-api/usecase"
 
 	"github.com/gin-gonic/gin"
 )
 
 type AuthHandler interface {
-	HandleSignin(c *gin.Context)
-	HandleSignout(c *gin.Context)
+	HandleLogin(c *gin.Context)
+	HandleLogout(c *gin.Context)
 }
 
 type authHandler struct {
@@ -25,9 +24,9 @@ func NewAuthHandler(uu usecase.UserUseCase, tu usecase.TokenUseCase) AuthHandler
 	}
 }
 
-func (ah authHandler) HandleSignin(c *gin.Context) {
+func (ah authHandler) HandleLogin(c *gin.Context) {
 	var requestBody struct {
-		UserID   string `json:"user_id"`
+		Username string `json:"username"`
 		Password string `json:"password"`
 	}
 
@@ -37,14 +36,14 @@ func (ah authHandler) HandleSignin(c *gin.Context) {
 		})
 		return
 	}
-	if requestBody.UserID == "" || requestBody.Password == "" {
+	if requestBody.Username == "" || requestBody.Password == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "Body is not valid",
 		})
 		return
 	}
 
-	user, err := ah.userUseCase.FindUserByUserID(requestBody.UserID)
+	userID, err := ah.userUseCase.ValidateUser(requestBody.Username, requestBody.Password)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "User ID or password is incorrect",
@@ -52,16 +51,21 @@ func (ah authHandler) HandleSignin(c *gin.Context) {
 		return
 	}
 
-	password := domain.NewPassword(requestBody.Password)
-	err = password.Compare(user.Password)
+	user, err := ah.userUseCase.FindUserByUserID(userID)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "User ID or password is incorrect",
 		})
 		return
 	}
+	if user.Username != requestBody.Username {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": "User ID or password is incorrect",
+		})
+		return
+	}
 
-	tokenString, err := ah.tokenUseCase.GenerateToken(requestBody.UserID)
+	tokenString, err := ah.tokenUseCase.GenerateToken(userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Token can not be generated",
@@ -75,7 +79,7 @@ func (ah authHandler) HandleSignin(c *gin.Context) {
 	})
 }
 
-func (ah authHandler) HandleSignout(c *gin.Context) {
+func (ah authHandler) HandleLogout(c *gin.Context) {
 	tokenString := c.GetHeader("Token")
 
 	_, err := ah.tokenUseCase.ValidateToken(tokenString)

@@ -55,6 +55,7 @@ func TestPutUserTokenNotExist(t *testing.T) {
 
 	requestBody := requestBody{
 		Username: "testname",
+		Email:    "test@mail.com",
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -79,6 +80,7 @@ func TestPutUserTokenNotCorrect(t *testing.T) {
 
 	requestBody := requestBody{
 		Username: "testname",
+		Email:    "test@mail.com",
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -99,17 +101,18 @@ func TestPutUserTokenNotCorrect(t *testing.T) {
 	}
 }
 
-func TestPutUserSuccess(t *testing.T) {
+func TestPutUserNameUpdate(t *testing.T) {
 	expectedStatusCode := http.StatusOK
 	expectedMessage := "User can be updated"
 
 	expectedUser := &domain.User{
-		UserID:   "testuser",
 		Username: "testname_updated",
+		Email:    "test@mail.com",
 	}
 
 	requestBody := requestBody{
 		Username: "testname_updated",
+		Email:    "test@mail.com",
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -141,5 +144,97 @@ func TestPutUserSuccess(t *testing.T) {
 
 	if response.User != *expectedUser {
 		t.Fatal("Username is not updated")
+	}
+}
+
+func TestPutUserMailUpdate(t *testing.T) {
+	expectedStatusCode := http.StatusOK
+	expectedMessage := "User can be updated"
+
+	expectedUser := &domain.User{
+		Username: "testname_updated",
+		Email:    "test_updated@mail.com",
+	}
+
+	requestBody := requestBody{
+		Username: "testname_updated",
+		Email:    "test_updated@mail.com",
+	}
+
+	jsonString, err := json.Marshal(requestBody)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	header := setToken(accessToken).ToArray()
+
+	resp, err := sendRequest("PUT", endpoint+"/user", header, bytes.NewBuffer(jsonString))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err = sendRequest("GET", endpoint+"/user", header, bytes.NewBuffer(jsonString))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	response, err := verifyExpectedResponse(resp, expectedStatusCode, "User can be acquired")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if response.User != *expectedUser {
+		t.Fatal("Email is not updated")
+	}
+}
+
+func TestPutUserNameAndMailUpdate(t *testing.T) {
+	expectedStatusCode := http.StatusOK
+	expectedMessage := "User can be updated"
+
+	expectedUser := &domain.User{
+		Username: "testname_updated_2",
+		Email:    "test_updated_2@mail.com",
+	}
+
+	requestBody := requestBody{
+		Username: "testname_updated_2",
+		Email:    "test_updated_2@mail.com",
+	}
+
+	jsonString, err := json.Marshal(requestBody)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	header := setToken(accessToken).ToArray()
+
+	resp, err := sendRequest("PUT", endpoint+"/user", header, bytes.NewBuffer(jsonString))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = verifyExpectedResponse(resp, expectedStatusCode, expectedMessage)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	resp, err = sendRequest("GET", endpoint+"/user", header, bytes.NewBuffer(jsonString))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	response, err := verifyExpectedResponse(resp, expectedStatusCode, "User can be acquired")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if response.User != *expectedUser {
+		t.Fatal("Username And Email is not updated")
 	}
 }

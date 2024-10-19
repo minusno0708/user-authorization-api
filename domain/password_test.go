@@ -2,36 +2,40 @@ package domain
 
 import "testing"
 
+var testUserID = "test_user_id"
 var pwdString = "test_password1234"
 
-var hashPwd string
-
 func TestPasswordToHash(t *testing.T) {
-	pwd := NewPassword(pwdString)
-	hash, err := pwd.ToHash()
+	pwd, err := NewPassword(testUserID, pwdString)
 	if err != nil {
-		t.Error("Error while hashing password")
+		t.Error("Error while creating password")
 	}
-	if hash == "" {
-		t.Error("Hashing password is empty")
+	if pwd.HashedPassword == "" {
+		t.Error("Hashed password is empty")
 	}
-	if hash == pwd.value {
-		t.Error("Hashing password is not hashed")
+	if pwd.HashedPassword == pwdString {
+		t.Error("password is not hashed")
 	}
-	hashPwd = hash
 }
 
 func TestPasswordIsMatch(t *testing.T) {
-	pwd := NewPassword(pwdString)
-	err := pwd.Compare(hashPwd)
+	pwd, err := NewPassword(testUserID, pwdString)
+	if err != nil {
+		t.Error("Error while creating password")
+	}
+	err = pwd.Validate(pwdString)
 	if err != nil {
 		t.Error("Password is not matched")
 	}
 }
 
 func TestPasswordIsNotMatch(t *testing.T) {
-	pwd := NewPassword("wrong_password")
-	err := pwd.Compare(hashPwd)
+	wrongPwd := "wrong_password"
+	pwd, err := NewPassword(testUserID, pwdString)
+	if err != nil {
+		t.Error("Error while creating password")
+	}
+	err = pwd.Validate(wrongPwd)
 	if err == nil {
 		t.Error("Password is matched")
 	}

@@ -6,6 +6,8 @@ import (
 	"user-register-api/infrastructure/persistence"
 )
 
+var passwordTestUserID = "00000000-0000-0000-0000-000000000000"
+
 func TestUsecaseGenerateToken(t *testing.T) {
 	cdb, err := config.ConnectCacheDB()
 	if err != nil {
@@ -15,7 +17,7 @@ func TestUsecaseGenerateToken(t *testing.T) {
 	tokenPersistence := persistence.NewTokenPersistence(cdb)
 	tokenUseCase := NewTokenUseCase(tokenPersistence)
 
-	_, err = tokenUseCase.GenerateToken(testUser.UserID)
+	_, err = tokenUseCase.GenerateToken(passwordTestUserID)
 	if err != nil {
 		t.Error(err)
 	}
@@ -30,7 +32,7 @@ func TestUsecaseValidateToken(t *testing.T) {
 	tokenPersistence := persistence.NewTokenPersistence(cdb)
 	tokenUseCase := NewTokenUseCase(tokenPersistence)
 
-	token, err := tokenUseCase.GenerateToken(testUser.UserID)
+	token, err := tokenUseCase.GenerateToken(passwordTestUserID)
 	if err != nil {
 		t.Error(err)
 	}
@@ -39,7 +41,7 @@ func TestUsecaseValidateToken(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	if userID != testUser.UserID {
+	if userID != passwordTestUserID {
 		t.Errorf("UserID is not correct")
 	}
 }
@@ -70,7 +72,7 @@ func TestUsecaseDeleteToken(t *testing.T) {
 	tokenPersistence := persistence.NewTokenPersistence(cdb)
 	tokenUseCase := NewTokenUseCase(tokenPersistence)
 
-	token, err := tokenUseCase.GenerateToken(testUser.UserID)
+	token, err := tokenUseCase.GenerateToken(passwordTestUserID)
 	if err != nil {
 		t.Error(err)
 	}
