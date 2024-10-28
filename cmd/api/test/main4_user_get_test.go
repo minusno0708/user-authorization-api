@@ -43,8 +43,8 @@ func TestGetUserSuccess(t *testing.T) {
 	expectedStatusCode := http.StatusOK
 	expectedMessage := "User can be acquired"
 	expectedUser := &domain.User{
-		Username: "testuser",
-		Email:    "test@mail.com",
+		Username: testUser.Username,
+		Email:    testUser.Email,
 	}
 
 	header := setToken(accessToken).ToArray()

@@ -25,12 +25,12 @@ func TestLoginBodyNotExist(t *testing.T) {
 	}
 }
 
-func TestLoginUserIDNotExist(t *testing.T) {
+func TestLoginUsernameNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Body is not valid"
 
 	requestBody := requestBody{
-		Password: "testpass",
+		Password: testUser.Password,
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -54,7 +54,7 @@ func TestLoginPasswordNotExist(t *testing.T) {
 	expectedMessage := "Body is not valid"
 
 	requestBody := requestBody{
-		Username: "testuser",
+		Username: testUser.Username,
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -79,7 +79,7 @@ func TestLoginUserNotExist(t *testing.T) {
 
 	requestBody := requestBody{
 		Username: "testuser_not_exist",
-		Password: "testpass",
+		Password: testUser.Password,
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -103,7 +103,7 @@ func TestLoginPasswordNotCorrect(t *testing.T) {
 	expectedMessage := "User ID or password is incorrect"
 
 	requestBody := requestBody{
-		Username: "testuser",
+		Username: testUser.Username,
 		Password: "testpass_not_correct",
 	}
 
@@ -128,8 +128,8 @@ func TestLoginSuccess(t *testing.T) {
 	expectedMessage := "Token can be acquired"
 
 	requestBody := requestBody{
-		Username: "testuser",
-		Password: "testpass",
+		Username: testUser.Username,
+		Password: testUser.Password,
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -222,8 +222,8 @@ func TestCanDeletedToken(t *testing.T) {
 
 func TestGetAccessToken(t *testing.T) {
 	requestBody := requestBody{
-		Username: "testuser",
-		Password: "testpass",
+		Username: testUser.Username,
+		Password: testUser.Password,
 	}
 
 	jsonString, err := json.Marshal(requestBody)

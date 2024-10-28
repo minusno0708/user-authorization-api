@@ -78,8 +78,8 @@ func TestUserCanBeDeleted(t *testing.T) {
 	expectedMessage := "User ID or password is incorrect"
 
 	requestBody := requestBody{
-		Username: "testuser",
-		Password: "testpass",
+		Username: testUser.Username,
+		Password: testUser.Password,
 	}
 
 	jsonString, err := json.Marshal(requestBody)

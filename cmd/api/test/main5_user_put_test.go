@@ -54,8 +54,8 @@ func TestPutUserTokenNotExist(t *testing.T) {
 	expectedMessage := "Failed to authenticate"
 
 	requestBody := requestBody{
-		Username: "testname",
-		Email:    "test@mail.com",
+		Username: updatedTestUser.Username,
+		Email:    updatedTestUser.Email,
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -79,8 +79,8 @@ func TestPutUserTokenNotCorrect(t *testing.T) {
 	expectedMessage := "Failed to authenticate"
 
 	requestBody := requestBody{
-		Username: "testname",
-		Email:    "test@mail.com",
+		Username: updatedTestUser.Username,
+		Email:    updatedTestUser.Email,
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -106,13 +106,13 @@ func TestPutUserNameUpdate(t *testing.T) {
 	expectedMessage := "User can be updated"
 
 	expectedUser := &domain.User{
-		Username: "testname_updated",
-		Email:    "test@mail.com",
+		Username: updatedTestUser.Username,
+		Email:    testUser.Email,
 	}
 
 	requestBody := requestBody{
-		Username: "testname_updated",
-		Email:    "test@mail.com",
+		Username: updatedTestUser.Username,
+		Email:    testUser.Email,
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -152,13 +152,13 @@ func TestPutUserMailUpdate(t *testing.T) {
 	expectedMessage := "User can be updated"
 
 	expectedUser := &domain.User{
-		Username: "testname_updated",
-		Email:    "test_updated@mail.com",
+		Username: updatedTestUser.Username,
+		Email:    updatedTestUser.Email,
 	}
 
 	requestBody := requestBody{
-		Username: "testname_updated",
-		Email:    "test_updated@mail.com",
+		Username: updatedTestUser.Username,
+		Email:    updatedTestUser.Email,
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -198,13 +198,13 @@ func TestPutUserNameAndMailUpdate(t *testing.T) {
 	expectedMessage := "User can be updated"
 
 	expectedUser := &domain.User{
-		Username: "testname_updated_2",
-		Email:    "test_updated_2@mail.com",
+		Username: testUser.Username,
+		Email:    testUser.Email,
 	}
 
 	requestBody := requestBody{
-		Username: "testname_updated_2",
-		Email:    "test_updated_2@mail.com",
+		Username: testUser.Username,
+		Email:    testUser.Email,
 	}
 
 	jsonString, err := json.Marshal(requestBody)

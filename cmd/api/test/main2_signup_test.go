@@ -27,8 +27,8 @@ func TestSignupUsernameNotExist(t *testing.T) {
 	expectedMessage := "Body is not valid"
 
 	requestBody := requestBody{
-		Email:    "test@mail.com",
-		Password: "testpass",
+		Email:    testUser.Email,
+		Password: testUser.Password,
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -52,8 +52,8 @@ func TestSignupEmailNotExist(t *testing.T) {
 	expectedMessage := "Body is not valid"
 
 	requestBody := requestBody{
-		Username: "testuser",
-		Password: "testpass",
+		Username: testUser.Username,
+		Password: testUser.Password,
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -77,8 +77,8 @@ func TestSignupPasswordNotExist(t *testing.T) {
 	expectedMessage := "Body is not valid"
 
 	requestBody := requestBody{
-		Username: "testuser",
-		Email:    "test@mail.com",
+		Username: testUser.Username,
+		Email:    testUser.Email,
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -97,14 +97,14 @@ func TestSignupPasswordNotExist(t *testing.T) {
 	}
 }
 
-func TestSignupSuccessExist(t *testing.T) {
+func TestSignupSuccess(t *testing.T) {
 	expectedStatusCode := http.StatusCreated
 	expectedMessage := "User created successfully"
 
 	requestBody := requestBody{
-		Username: "testuser",
-		Email:    "test@mail.com",
-		Password: "testpass",
+		Username: testUser.Username,
+		Email:    testUser.Email,
+		Password: testUser.Password,
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -128,9 +128,9 @@ func TestSignupUserConflict(t *testing.T) {
 	expectedMessage := "User already exists"
 
 	requestBody := requestBody{
-		Username: "testuser",
-		Email:    "test@mail.com",
-		Password: "testpass",
+		Username: testUser.Username,
+		Email:    testUser.Email,
+		Password: testUser.Password,
 	}
 
 	jsonString, err := json.Marshal(requestBody)

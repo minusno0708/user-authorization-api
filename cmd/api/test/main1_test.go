@@ -29,6 +29,23 @@ type errorString struct {
 	message string
 }
 
+type RequestUser struct {
+	Username string
+	Email    string
+	Password string
+}
+
+var testUser = RequestUser{
+	Username: "testuser",
+	Email:    "test@mail.com",
+	Password: "testpass",
+}
+
+var updatedTestUser = RequestUser{
+	Username: "updated_username",
+	Email:    "updated_test@mail.com",
+}
+
 func (e *errorString) Error() string {
 	return e.message
 }
