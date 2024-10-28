@@ -37,13 +37,13 @@ type RequestUser struct {
 
 var testUser = RequestUser{
 	Username: "testuser",
-	Email:    "test@mail.com",
+	Email:    "test@example.com",
 	Password: "testpass",
 }
 
 var updatedTestUser = RequestUser{
 	Username: "updated_username",
-	Email:    "updated_test@mail.com",
+	Email:    "updated_test@example.com",
 }
 
 func (e *errorString) Error() string {

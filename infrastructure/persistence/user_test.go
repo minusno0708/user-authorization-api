@@ -9,7 +9,7 @@ import (
 
 var testUser = domain.User{
 	Username: "testuser_infra",
-	Email:    "test_infra@mail.com",
+	Email:    "test_infra@example.com",
 }
 
 func TestInsertUser(t *testing.T) {

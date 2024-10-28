@@ -15,7 +15,7 @@ type RequestUser struct {
 
 var testUser = RequestUser{
 	Username: "testuser_usecase",
-	Email:    "test_usecase@mail.com",
+	Email:    "test_usecase@example.com",
 	Password: "testpass_usecase",
 }
 
