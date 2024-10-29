@@ -14,7 +14,7 @@ func TestPutUserBodyNotExist(t *testing.T) {
 
 	header := setToken(accessToken).ToArray()
 
-	resp, err := sendRequest("PUT", endpoint+"/user", header, nil)
+	resp, err := sendRequest("PUT", endpoint+"/users", header, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -38,7 +38,7 @@ func TestPutUserUsernameNotExist(t *testing.T) {
 
 	header := setToken(accessToken).ToArray()
 
-	resp, err := sendRequest("PUT", endpoint+"/user", header, bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("PUT", endpoint+"/users", header, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -63,7 +63,7 @@ func TestPutUserTokenNotExist(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("PUT", endpoint+"/user", nil, bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("PUT", endpoint+"/users", nil, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -90,7 +90,7 @@ func TestPutUserTokenNotCorrect(t *testing.T) {
 
 	header := setToken("incorrect token").ToArray()
 
-	resp, err := sendRequest("PUT", endpoint+"/user", header, bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("PUT", endpoint+"/users", header, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -122,7 +122,7 @@ func TestPutUserNameUpdate(t *testing.T) {
 
 	header := setToken(accessToken).ToArray()
 
-	resp, err := sendRequest("PUT", endpoint+"/user", header, bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("PUT", endpoint+"/users", header, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -132,7 +132,7 @@ func TestPutUserNameUpdate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err = sendRequest("GET", endpoint+"/user", header, bytes.NewBuffer(jsonString))
+	resp, err = sendRequest("GET", endpoint+"/users", header, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -168,7 +168,7 @@ func TestPutUserMailUpdate(t *testing.T) {
 
 	header := setToken(accessToken).ToArray()
 
-	resp, err := sendRequest("PUT", endpoint+"/user", header, bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("PUT", endpoint+"/users", header, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -178,7 +178,7 @@ func TestPutUserMailUpdate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err = sendRequest("GET", endpoint+"/user", header, bytes.NewBuffer(jsonString))
+	resp, err = sendRequest("GET", endpoint+"/users", header, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -214,7 +214,7 @@ func TestPutUserNameAndMailUpdate(t *testing.T) {
 
 	header := setToken(accessToken).ToArray()
 
-	resp, err := sendRequest("PUT", endpoint+"/user", header, bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("PUT", endpoint+"/users", header, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -224,7 +224,7 @@ func TestPutUserNameAndMailUpdate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err = sendRequest("GET", endpoint+"/user", header, bytes.NewBuffer(jsonString))
+	resp, err = sendRequest("GET", endpoint+"/users", header, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
