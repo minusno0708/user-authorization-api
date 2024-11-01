@@ -1,0 +1,384 @@
+openapi: '3.0.0'
+
+info:
+  version: "1.1.0"
+  title: User-Authorization-API
+  
+tags:
+  - name: user
+  - name: auth
+
+servers:
+  - url: http://localhost:8080
+    description: Development server
+
+paths:
+  /:
+    get:
+      description: |
+        接続確認用のエンドポイント
+
+      responses:
+        200:
+          description: Successful responses
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Connect successfully"
+
+  /signup:
+    post:
+      tags:
+        - user
+      description: |
+        新しいユーザーを登録する
+
+      requestBody:
+        description: ユーザー情報
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserRequest'
+      responses:
+        201:
+          description: ユーザー登録成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignupSuccessResponse'
+        400:
+          description: リクエストの形式が正しくない場合
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidRequestError'
+        409:
+          description: ユーザーが既に存在する場合
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserConflictError'
+
+  /users: 
+    get:
+      tags:
+        - user
+      description: |
+        ユーザー情報を取得する
+      parameters:
+        - name: Token
+          in: header
+          required: true
+          schema:
+            type: string
+          description: アクセストークン
+      responses:
+        200:
+          description: ユーザー情報取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUsersSuccessResponse'
+        401:
+          description: 認証エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+
+    put:
+      tags:
+        - user
+      description: |
+        ユーザー情報を更新する
+      parameters:
+        - name: Token
+          in: header
+          required: true
+          schema:
+            type: string
+          description: アクセストークン
+      requestBody:
+        description: 新規ユーザー名
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        200:
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutUsersSuccessResponse'
+        400:
+          description: リクエストの形式が正しくない場合
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidRequestError'
+        401:
+          description: 認証エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenValidationError'
+       
+    delete:
+      tags:
+        - user
+      description: |
+        ユーザー情報を削除する
+      parameters:
+        - name: Token
+          in: header
+          required: true
+          schema:
+            type: string
+          description: アクセストークン 
+      responses:
+        200:
+          description: 削除成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteUsersSuccessResponse'
+        401:
+          description: 認証エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenValidationError'
+
+  /login:
+    post:
+      tags:
+        - auth
+      description: |
+        ログイン用のエンドポイント
+      requestBody:
+        description: ユーザー情報
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticationUserRequest'
+      responses:
+        201:
+          description: ログイン成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginSuccessResponse'
+        400:
+          description: リクエストの形式が正しくない場合
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvalidRequestError'
+        401:
+          description: 認証エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationError'
+        
+  /logout:
+    delete:
+      tags:
+        - auth
+      description: |
+        ログアウト用のエンドポイント
+      parameters:
+        - name: Token
+          in: header
+          required: true
+          schema:
+            type: string
+          description: アクセストークン
+      responses:
+        200:
+          description: ログアウト成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutSuccessResponse'
+        401:
+          description: 認証エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenValidationError'
+
+components:
+  schemas:
+    UserSchema:
+      type: object
+      properties:
+        user_id:
+          type: string
+          example: "user_id"
+        username:
+          type: string
+          example: "username"
+        email:
+          type: string
+          example: "email"
+
+    RegisterUserRequest:
+      type: object
+      required:
+        - username
+        - email
+        - password
+      properties:
+        username:
+          type: string
+          example: "username"
+        email:
+          type: string
+          example: "email"
+        password:
+          type: string
+          example: "password"
+    AuthenticationUserRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          example: "username"
+        password:
+          type: string
+          example: "password"
+    UpdateUserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: "new_username"
+        email:
+          type: string
+          example: "new_email"
+
+    SignupSuccessResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 201
+        message:
+          type: string
+          example: "Create Successfully"
+        user:
+          $ref: '#/components/schemas/UserSchema'
+    GetUsersSuccessResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "Get Successfully"
+        user:
+          $ref: '#/components/schemas/UserSchema'
+    PutUsersSuccessResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "Update Successfully"
+        user:
+          $ref: '#/components/schemas/UserSchema'
+    DeleteUsersSuccessResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "Delete Successfully"
+
+    LoginSuccessResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 201
+        message:
+          type: string
+          example: "Login Successfully"
+        token:
+          type: string
+          example: ""
+    LogoutSuccessResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: "Logout Successfully"
+          
+    InvalidRequestError:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 400
+            message:
+              type: string
+              example: "Invalid request"         
+    AuthenticationError:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 401
+            message:
+              type: string
+              example: "Authentication error"
+    TokenValidationError:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 401
+            message:
+              type: string
+              example: "Token validation error"
+    UserConflictError:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 409
+            message:
+              type: string
+              example: "User already exists"
