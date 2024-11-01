@@ -42,9 +42,9 @@ func main() {
 	})
 
 	r.POST("/signup", userHandler.HandleUserSignup)
-	r.GET("/user", userHandler.HandleUserGet)
-	r.PUT("/user", userHandler.HandleUserPut)
-	r.DELETE("/user", userHandler.HandleUserDelete)
+	r.GET("/users", userHandler.HandleUserGet)
+	r.PUT("/users", userHandler.HandleUserPut)
+	r.DELETE("/users", userHandler.HandleUserDelete)
 
 	r.POST("/login", authHandler.HandleLogin)
 	r.DELETE("/logout", authHandler.HandleLogout)
