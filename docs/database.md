@@ -1,6 +1,6 @@
 # データベース設計
 
-## MySQL
+## MariaDB
 
 ``` mermaid
 ---
