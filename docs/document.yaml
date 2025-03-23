@@ -89,7 +89,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthenticationError'
+                $ref: '#/components/schemas/TokenValidationError'
 
     put:
       tags:
@@ -272,7 +272,7 @@ components:
     SignupSuccessResponse:
       type: object
       properties:
-        code:
+        status:
           type: integer
           example: 201
         message:
@@ -283,7 +283,7 @@ components:
     GetUsersSuccessResponse:
       type: object
       properties:
-        code:
+        status:
           type: integer
           example: 200
         message:
@@ -294,7 +294,7 @@ components:
     PutUsersSuccessResponse:
       type: object
       properties:
-        code:
+        status:
           type: integer
           example: 200
         message:
@@ -305,7 +305,7 @@ components:
     DeleteUsersSuccessResponse:
       type: object
       properties:
-        code:
+        status:
           type: integer
           example: 200
         message:
@@ -315,7 +315,7 @@ components:
     LoginSuccessResponse:
       type: object
       properties:
-        code:
+        status:
           type: integer
           example: 201
         message:
@@ -327,7 +327,7 @@ components:
     LogoutSuccessResponse:
       type: object
       properties:
-        code:
+        status:
           type: integer
           example: 200
         message:
@@ -340,7 +340,7 @@ components:
         error:
           type: object
           properties:
-            code:
+            status:
               type: integer
               example: 400
             message:
@@ -352,7 +352,7 @@ components:
         error:
           type: object
           properties:
-            code:
+            status:
               type: integer
               example: 401
             message:
@@ -364,7 +364,7 @@ components:
         error:
           type: object
           properties:
-            code:
+            status:
               type: integer
               example: 401
             message:
@@ -376,7 +376,7 @@ components:
         error:
           type: object
           properties:
-            code:
+            status:
               type: integer
               example: 409
             message:
