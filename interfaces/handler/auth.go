@@ -32,13 +32,15 @@ func (ah authHandler) HandleLogin(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&requestBody); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Body does not exist",
+			"status":  http.StatusBadRequest,
+			"message": "Invalid request",
 		})
 		return
 	}
 	if requestBody.Username == "" || requestBody.Password == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Body is not valid",
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "Invalid request",
 		})
 		return
 	}
@@ -46,21 +48,8 @@ func (ah authHandler) HandleLogin(c *gin.Context) {
 	userID, err := ah.userUseCase.ValidateUser(requestBody.Username, requestBody.Password)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "User ID or password is incorrect",
-		})
-		return
-	}
-
-	user, err := ah.userUseCase.FindUserByUserID(userID)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "User ID or password is incorrect",
-		})
-		return
-	}
-	if user.Username != requestBody.Username {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "User ID or password is incorrect",
+			"status":  http.StatusUnauthorized,
+			"message": "Authentication error",
 		})
 		return
 	}
@@ -68,13 +57,15 @@ func (ah authHandler) HandleLogin(c *gin.Context) {
 	tokenString, err := ah.tokenUseCase.GenerateToken(userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Token can not be generated",
+			"status":  http.StatusInternalServerError,
+			"message": "Failed to generate token",
 		})
 		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"message": "Token can be acquired",
+		"status":  http.StatusCreated,
+		"message": "Login Successfully",
 		"token":   tokenString,
 	})
 }
@@ -99,6 +90,7 @@ func (ah authHandler) HandleLogout(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Token can be deleted",
+		"status":  http.StatusOK,
+		"message": "Logout Successfully",
 	})
 }

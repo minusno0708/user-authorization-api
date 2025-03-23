@@ -32,17 +32,12 @@ func TestUsecaseInsertUser(t *testing.T) {
 	passwordPersintence := persistence.NewPasswordPersistence(db)
 	userUseCase := NewUserUseCase(userPersistence, passwordPersintence)
 
-	err = userUseCase.InsertUser(testUser.Username, testUser.Email, testUser.Password)
+	user, err := userUseCase.InsertUser(testUser.Username, testUser.Email, testUser.Password)
 	if err != nil {
 		t.Error(err)
 	}
 
 	testUserID, err = userUseCase.ValidateUser(testUser.Username, testUser.Password)
-	if err != nil {
-		t.Error(err)
-	}
-
-	user, err := userUseCase.FindUserByUserID(testUserID)
 	if err != nil {
 		t.Error(err)
 	}
@@ -74,7 +69,7 @@ func TestUsecaseUpdateUser(t *testing.T) {
 		t.Error(err)
 	}
 
-	err = userUseCase.UpdateUsername(user.ID, updateUsername, updateEmail)
+	err = userUseCase.UpdateUser(user.ID, updateUsername, updateEmail)
 	if err != nil {
 		t.Error(err)
 	}

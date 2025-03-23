@@ -42,27 +42,36 @@ func (uh userHandler) HandleUserSignup(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&requestBody); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Body does not exist",
+			"status":  http.StatusBadRequest,
+			"message": "Invalid request",
 		})
 		return
 	}
 	if requestBody.Username == "" || requestBody.Email == "" || requestBody.Password == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Body is not valid",
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "Invalid request",
 		})
 		return
 	}
 
-	err := uh.userUseCase.InsertUser(requestBody.Username, requestBody.Email, requestBody.Password)
+	user, err := uh.userUseCase.InsertUser(requestBody.Username, requestBody.Email, requestBody.Password)
 	if err != nil {
 		c.JSON(http.StatusConflict, gin.H{
+			"status":  http.StatusConflict,
 			"message": "User already exists",
 		})
 		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"message": "User created successfully",
+		"status":  http.StatusCreated,
+		"message": "Create Successfully",
+		"user": &responseUser{
+			UserID:   user.ID,
+			Username: user.Username,
+			Email:    user.Email,
+		},
 	})
 }
 
@@ -72,21 +81,24 @@ func (uh userHandler) HandleUserGet(c *gin.Context) {
 	userID, err := uh.tokenUseCase.ValidateToken(tokenString)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Failed to authenticate",
+			"status":  http.StatusUnauthorized,
+			"message": "Token validation error",
 		})
 		return
 	}
 
 	user, err := uh.userUseCase.FindUserByUserID(userID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":  http.StatusNotFound,
 			"message": "User not found",
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "User can be acquired",
+		"status":  http.StatusOK,
+		"message": "Get successfully",
 		"user": &responseUser{
 			UserID:   user.ID,
 			Username: user.Username,
@@ -103,14 +115,16 @@ func (uh userHandler) HandleUserPut(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&requestBody); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Body does not exist",
+			"status":  http.StatusBadRequest,
+			"message": "Invalid request",
 		})
 		return
 	}
 
 	if requestBody.UpdateUsername == "" && requestBody.UpdateEmail == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Body is not valid",
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "Invalid request",
 		})
 		return
 	}
@@ -120,21 +134,38 @@ func (uh userHandler) HandleUserPut(c *gin.Context) {
 	userID, err := uh.tokenUseCase.ValidateToken(tokenString)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Failed to authenticate",
+			"status":  http.StatusUnauthorized,
+			"message": "Token validation error",
 		})
 		return
 	}
 
-	err = uh.userUseCase.UpdateUsername(userID, requestBody.UpdateUsername, requestBody.UpdateEmail)
+	err = uh.userUseCase.UpdateUser(userID, requestBody.UpdateUsername, requestBody.UpdateEmail)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "User can not be updated",
+			"status":  http.StatusInternalServerError,
+			"message": "Failed to update user",
+		})
+		return
+	}
+
+	user, err := uh.userUseCase.FindUserByUserID(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  http.StatusInternalServerError,
+			"message": "Failed to get user",
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "User can be updated",
+		"status":  http.StatusOK,
+		"message": "Update successfully",
+		"user": &responseUser{
+			UserID:   user.ID,
+			Username: user.Username,
+			Email:    user.Email,
+		},
 	})
 }
 
@@ -144,7 +175,8 @@ func (uh userHandler) HandleUserDelete(c *gin.Context) {
 	userID, err := uh.tokenUseCase.ValidateToken(tokenString)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Failed to authenticate",
+			"status":  http.StatusUnauthorized,
+			"message": "Token validation error",
 		})
 		return
 	}
@@ -152,7 +184,7 @@ func (uh userHandler) HandleUserDelete(c *gin.Context) {
 	err = uh.userUseCase.DeleteUser(userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "User can not be deleted",
+			"message": "Failed to delete user",
 		})
 		return
 	}
@@ -160,12 +192,14 @@ func (uh userHandler) HandleUserDelete(c *gin.Context) {
 	err = uh.tokenUseCase.DeleteToken(tokenString)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Token can not be deleted",
+			"status":  http.StatusInternalServerError,
+			"message": "Failed to delete token",
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "User can be deleted",
+		"status":  http.StatusOK,
+		"message": "Delete successfully",
 	})
 }
