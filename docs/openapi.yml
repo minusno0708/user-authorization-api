@@ -1,26 +1,30 @@
 openapi: '3.0.0'
 
 info:
-  version: "1.1.0"
+  version: "0.1.1"
   title: User-Authorization-API
   
 tags:
-  - name: user
+  - name: health
+    description: ヘルスチェック
+  - name: users
+    description: ユーザー管理
   - name: auth
+    description: 認証認可管理
 
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8080/v1
     description: Development server
 
 paths:
-  /:
+  /health:
     get:
-      description: |
-        接続確認用のエンドポイント
-
+      tags:
+        - health
+      description: ヘルスチェック用のエンドポイント
       responses:
         200:
-          description: Successful responses
+          description: ヘルスチェック成功
           content:
             application/json:
               schema:
@@ -28,200 +32,178 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Connect successfully"
+                    example: "OK"
 
-  /signup:
+  /users:
     post:
       tags:
-        - user
-      description: |
-        新しいユーザーを登録する
-
+        - users
+      description: 新規ユーザー登録
       requestBody:
         description: ユーザー情報
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RegisterUserRequest'
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "username"
+                email:
+                  type: string
+                  example: "email@example.com"
+                password:
+                  type: string
+                  example: "P@ssw0rd"
+              required:
+                - username
+                - email
+                - password
       responses:
         201:
-          description: ユーザー登録成功
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SignupSuccessResponse'
+          $ref: '#/components/responses/UserResponse'
         400:
-          description: リクエストの形式が正しくない場合
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InvalidRequestError'
+          $ref: '#/components/responses/400'
         409:
-          description: ユーザーが既に存在する場合
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserConflictError'
+          $ref: '#/components/responses/409'
 
-  /users: 
+  /users/{username}:
     get:
       tags:
-        - user
-      description: |
-        ユーザー情報を取得する
+        - users
+      description: ユーザー情報取得
       parameters:
-        - name: Token
-          in: header
+        - name: username
+          in: path
           required: true
           schema:
             type: string
-          description: アクセストークン
       responses:
         200:
-          description: ユーザー情報取得成功
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetUsersSuccessResponse'
+          $ref: '#/components/responses/UserResponse'
+        404:
+          $ref: '#/components/responses/404'
+  
+  /me:
+    get:
+      tags:
+        - users
+      description: ログインユーザー取得
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          $ref: '#/components/responses/UserResponse'
         401:
-          description: 認証エラー
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TokenValidationError'
-
+          $ref: '#/components/responses/401'
     put:
       tags:
-        - user
-      description: |
-        ユーザー情報を更新する
-      parameters:
-        - name: Token
-          in: header
-          required: true
-          schema:
-            type: string
-          description: アクセストークン
-      requestBody:
-        description: 新規ユーザー名
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateUserRequest'
-      responses:
-        200:
-          description: 更新成功
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PutUsersSuccessResponse'
-        400:
-          description: リクエストの形式が正しくない場合
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InvalidRequestError'
-        401:
-          description: 認証エラー
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TokenValidationError'
-       
-    delete:
-      tags:
-        - user
-      description: |
-        ユーザー情報を削除する
-      parameters:
-        - name: Token
-          in: header
-          required: true
-          schema:
-            type: string
-          description: アクセストークン 
-      responses:
-        200:
-          description: 削除成功
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DeleteUsersSuccessResponse'
-        401:
-          description: 認証エラー
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TokenValidationError'
-
-  /login:
-    post:
-      tags:
-        - auth
-      description: |
-        ログイン用のエンドポイント
+        - users
+      description: ログインユーザー更新
+      security:
+        - BearerAuth: []
       requestBody:
         description: ユーザー情報
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthenticationUserRequest'
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "username"
+                email:
+                  type: string
+                  example: "email@example.com"
+                password:
+                  type: string
+                  example: "P@ssw0rd"
       responses:
-        201:
-          description: ログイン成功
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LoginSuccessResponse'
+        200:
+          $ref: '#/components/responses/UserResponse'
         400:
-          description: リクエストの形式が正しくない場合
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InvalidRequestError'
+          $ref: '#/components/responses/400'
         401:
-          description: 認証エラー
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthenticationError'
-        
-  /logout:
+          $ref: '#/components/responses/401'
     delete:
       tags:
+        - users
+      description: ログインユーザー削除
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Delete
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Deleted"
+        401:
+          $ref: '#/components/responses/401'
+
+  /auth/login:
+    post:
+      tags:
         - auth
-      description: |
-        ログアウト用のエンドポイント
-      parameters:
-        - name: Token
-          in: header
-          required: true
-          schema:
-            type: string
-          description: アクセストークン
+      description: ログイン
+      requestBody:
+        description: ユーザー情報
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "username"
+                password:
+                  type: string
+                  example: "P@ssw0rd"
+              required:
+                - username
+                - password
+      responses:
+        201:
+          $ref: '#/components/responses/TokenResponse'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        
+  /auth/logout:
+    post:
+      tags:
+        - auth
+      description: ログアウト
+      security:
+        - BearerAuth: []
       responses:
         200:
           description: ログアウト成功
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LogoutSuccessResponse'
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Logout"
         401:
-          description: 認証エラー
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TokenValidationError'
+          $ref: '#/components/responses/401'
 
 components:
   schemas:
-    UserSchema:
+    User:
       type: object
       properties:
-        user_id:
+        id:
           type: string
           example: "user_id"
         username:
@@ -229,156 +211,105 @@ components:
           example: "username"
         email:
           type: string
-          example: "email"
+          example: "email@example.com"
+        created_at:
+          type: string
+          format: date-time
+          example: "2023-10-01T12:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2023-10-01T12:00:00Z"
+    Token:
+      type: string
+      example: "access_token"
 
-    RegisterUserRequest:
-      type: object
-      required:
-        - username
-        - email
-        - password
-      properties:
-        username:
-          type: string
-          example: "username"
-        email:
-          type: string
-          example: "email"
-        password:
-          type: string
-          example: "password"
-    AuthenticationUserRequest:
-      type: object
-      required:
-        - username
-        - password
-      properties:
-        username:
-          type: string
-          example: "username"
-        password:
-          type: string
-          example: "password"
-    UpdateUserRequest:
-      type: object
-      properties:
-        username:
-          type: string
-          example: "new_username"
-        email:
-          type: string
-          example: "new_email"
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 
-    SignupSuccessResponse:
-      type: object
-      properties:
-        status:
-          type: integer
-          example: 201
-        message:
-          type: string
-          example: "Create Successfully"
-        user:
-          $ref: '#/components/schemas/UserSchema'
-    GetUsersSuccessResponse:
-      type: object
-      properties:
-        status:
-          type: integer
-          example: 200
-        message:
-          type: string
-          example: "Get Successfully"
-        user:
-          $ref: '#/components/schemas/UserSchema'
-    PutUsersSuccessResponse:
-      type: object
-      properties:
-        status:
-          type: integer
-          example: 200
-        message:
-          type: string
-          example: "Update Successfully"
-        user:
-          $ref: '#/components/schemas/UserSchema'
-    DeleteUsersSuccessResponse:
-      type: object
-      properties:
-        status:
-          type: integer
-          example: 200
-        message:
-          type: string
-          example: "Delete Successfully"
-
-    LoginSuccessResponse:
-      type: object
-      properties:
-        status:
-          type: integer
-          example: 201
-        message:
-          type: string
-          example: "Login Successfully"
-        token:
-          type: string
-          example: ""
-    LogoutSuccessResponse:
-      type: object
-      properties:
-        status:
-          type: integer
-          example: 200
-        message:
-          type: string
-          example: "Logout Successfully"
-          
-    InvalidRequestError:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            status:
-              type: integer
-              example: 400
-            message:
-              type: string
-              example: "Invalid request"         
-    AuthenticationError:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            status:
-              type: integer
-              example: 401
-            message:
-              type: string
-              example: "Authentication error"
-    TokenValidationError:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            status:
-              type: integer
-              example: 401
-            message:
-              type: string
-              example: "Token validation error"
-    UserConflictError:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            status:
-              type: integer
-              example: 409
-            message:
-              type: string
-              example: "User already exists"
+  responses:
+    UserResponse:
+      description: ユーザー情報
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user:
+                $ref: '#/components/schemas/User'
+    TokenResponse:
+      description: アクセストークン
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              token:
+                $ref: '#/components/schemas/Token'
+    400:
+      description: "Bad Request"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: "Bad Request"
+    401:
+      description: "Unauthorized"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: "Unauthorized"
+    404:
+      description: "Not Found"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: "Not Found"
+    409:
+      description: "Conflict"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 409
+                  message:
+                    type: string
+                    example: "Conflict"
