@@ -1,31 +1,36 @@
-package domain
+package token
 
 import (
-	"errors"
 	"time"
 
+	"user-register-api/pkg/errors"
+	"user-register-api/pkg/uuid"
+
 	"github.com/golang-jwt/jwt"
-	"github.com/google/uuid"
+)
+
+const (
+	lifetime = time.Hour * 24
 )
 
 type Token struct {
 	value *jwt.Token
 }
 
-var secretKey = "secret"
-
 func NewToken(userID string) *Token {
-	claims := jwt.MapClaims{
-		"user_id": userID,
-		"uuid":    uuid.New().String(),
-		"exp":     time.Now().Add(time.Hour * 24).Unix(),
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	token := jwt.NewWithClaims(
+		jwt.SigningMethodHS256,
+		jwt.MapClaims{
+			"user_id": userID,
+			"uuid":    uuid.New(),
+			"exp":     time.Now().Add(lifetime).Unix(),
+		},
+	)
 
 	return &Token{value: token}
 }
 
-func (t *Token) ToString() (string, error) {
+func (t *Token) SignedString(secretKey string) (string, error) {
 	tokenString, err := t.value.SignedString([]byte(secretKey))
 	if err != nil {
 		return "", err
@@ -33,15 +38,15 @@ func (t *Token) ToString() (string, error) {
 	return tokenString, nil
 }
 
-func ParseToken(tokenString string) (*Token, error) {
+func ParseToken(tokenString, secretKey string) (*Token, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("invalid token")
+			return nil, errors.ErrForbidden
 		}
 		return []byte(secretKey), nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.ErrForbidden
 	}
 	return &Token{value: token}, nil
 }
@@ -60,9 +65,8 @@ func (t *Token) Exp() int64 {
 		exp = int64(t.value.Claims.(jwt.MapClaims)["exp"].(float64))
 	}
 	return exp
-
 }
 
-func (t *Token) IsExpired() bool {
-	return time.Now().Unix() > int64(t.Exp())
+func (t *Token) IsValid() bool {
+	return time.Now().Unix() <= int64(t.Exp())
 }
