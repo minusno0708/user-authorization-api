@@ -13,9 +13,9 @@ erDiagram
         string id PK "ID"
         string username UK "ユーザー名"
         string email "メールアドレス"
-        boolean is_deleted "論理削除のフラグ"
         timestamp created_at "作成日時"
         timestamp updated_at "更新日時"
+        timestamp deleted_at "削除日時"
     }
 
     passwords {
