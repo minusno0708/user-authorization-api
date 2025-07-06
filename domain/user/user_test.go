@@ -7,6 +7,8 @@ import (
 )
 
 func Test_User_SetID(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name        string
 		id          string
@@ -45,6 +47,8 @@ func Test_User_SetID(t *testing.T) {
 }
 
 func Test_User_SetUsername(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name        string
 		username    string
