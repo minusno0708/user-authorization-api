@@ -8,10 +8,8 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-var dbAddress = "db:3306"
-
-func ConnectDB() (*sql.DB, error) {
-	db, err := sql.Open("mysql", "root:root@tcp("+dbAddress+")/test_db")
+func ConnectDB(dsn string) (*sql.DB, error) {
+	db, err := sql.Open("mysql", "root:root@tcp("+dsn+")/test_db")
 	if err != nil {
 		return nil, err
 	}
@@ -22,11 +20,11 @@ func ConnectDB() (*sql.DB, error) {
 	return db, nil
 }
 
-func ConnectCacheDB() (*redis.Client, error) {
+func ConnectCacheDB(dsn string) (*redis.Client, error) {
 	var ctx = context.Background()
 
 	cdb := redis.NewClient(&redis.Options{
-		Addr:     "cache:6379",
+		Addr:     dsn,
 		Password: "",
 		DB:       0,
 	})
