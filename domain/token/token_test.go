@@ -91,12 +91,12 @@ func Test_Token_Valid(t *testing.T) {
 	tests := []struct {
 		name        string
 		token       *Token
-		expectValid bool
+		expectError error
 	}{
 		{
 			name:        "正常系: 有効なトークンを検証する",
 			token:       NewToken(userID),
-			expectValid: true,
+			expectError: nil,
 		},
 		{
 			name: "異常系: 期限切れのトークンを検証する",
@@ -110,7 +110,7 @@ func Test_Token_Valid(t *testing.T) {
 					},
 				),
 			},
-			expectValid: false,
+			expectError: errors.ErrForbidden,
 		},
 	}
 
@@ -119,8 +119,8 @@ func Test_Token_Valid(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			if tt.token.IsValid() != tt.expectValid {
-				t.Errorf("Expected validity %v, got %v", tt.expectValid, tt.token.IsValid())
+			if !errors.Is(tt.token.IsValid(), tt.expectError) {
+				t.Errorf("Expected validity %v, got %v", tt.expectError, tt.token.IsValid())
 			}
 		})
 	}

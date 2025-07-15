@@ -67,6 +67,10 @@ func (t *Token) Exp() int64 {
 	return exp
 }
 
-func (t *Token) IsValid() bool {
-	return time.Now().Unix() <= int64(t.Exp())
+func (t *Token) IsValid() error {
+	if time.Now().Unix() > int64(t.Exp()) {
+		return errors.ErrForbidden
+	}
+
+	return nil
 }
