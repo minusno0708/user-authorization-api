@@ -23,7 +23,7 @@ func (tr tokenRepository) Invalidate(tokenString string) error {
 
 	err := tr.Set(ctx, tokenString, "invalid", time.Hour*72).Err()
 	if err != nil {
-		return err
+		return errors.ErrInternalServer
 	}
 
 	return nil
