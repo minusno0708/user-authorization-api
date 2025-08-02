@@ -15,8 +15,8 @@ const endpoint = "http://localhost:8080"
 
 type requestBody struct {
 	TokenString string `json:"token"`
-	UserID      string `json:"user_id"`
 	Username    string `json:"username"`
+	Email       string `json:"email"`
 	Password    string `json:"password"`
 }
 
@@ -27,6 +27,23 @@ type responseBody struct {
 
 type errorString struct {
 	message string
+}
+
+type RequestUser struct {
+	Username string
+	Email    string
+	Password string
+}
+
+var testUser = RequestUser{
+	Username: "testuser",
+	Email:    "test@example.com",
+	Password: "testpass",
+}
+
+var updatedTestUser = RequestUser{
+	Username: "updated_username",
+	Email:    "updated_test@example.com",
 }
 
 func (e *errorString) Error() string {

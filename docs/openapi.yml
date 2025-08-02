@@ -1,0 +1,315 @@
+openapi: '3.0.0'
+
+info:
+  version: "0.1.1"
+  title: User-Authorization-API
+  
+tags:
+  - name: health
+    description: ヘルスチェック
+  - name: users
+    description: ユーザー管理
+  - name: auth
+    description: 認証認可管理
+
+servers:
+  - url: http://localhost:8080/v1
+    description: Development server
+
+paths:
+  /health:
+    get:
+      tags:
+        - health
+      description: ヘルスチェック用のエンドポイント
+      responses:
+        200:
+          description: ヘルスチェック成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "OK"
+
+  /users:
+    post:
+      tags:
+        - users
+      description: 新規ユーザー登録
+      requestBody:
+        description: ユーザー情報
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "username"
+                email:
+                  type: string
+                  example: "email@example.com"
+                password:
+                  type: string
+                  example: "P@ssw0rd"
+              required:
+                - username
+                - email
+                - password
+      responses:
+        201:
+          $ref: '#/components/responses/UserResponse'
+        400:
+          $ref: '#/components/responses/400'
+        409:
+          $ref: '#/components/responses/409'
+
+  /users/{username}:
+    get:
+      tags:
+        - users
+      description: ユーザー情報取得
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          $ref: '#/components/responses/UserResponse'
+        404:
+          $ref: '#/components/responses/404'
+  
+  /me:
+    get:
+      tags:
+        - users
+      description: ログインユーザー取得
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          $ref: '#/components/responses/UserResponse'
+        401:
+          $ref: '#/components/responses/401'
+    put:
+      tags:
+        - users
+      description: ログインユーザー更新
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: ユーザー情報
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "username"
+                email:
+                  type: string
+                  example: "email@example.com"
+                password:
+                  type: string
+                  example: "P@ssw0rd"
+      responses:
+        200:
+          $ref: '#/components/responses/UserResponse'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+    delete:
+      tags:
+        - users
+      description: ログインユーザー削除
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Delete
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Deleted"
+        401:
+          $ref: '#/components/responses/401'
+
+  /auth/login:
+    post:
+      tags:
+        - auth
+      description: ログイン
+      requestBody:
+        description: ユーザー情報
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "username"
+                password:
+                  type: string
+                  example: "P@ssw0rd"
+              required:
+                - username
+                - password
+      responses:
+        201:
+          $ref: '#/components/responses/TokenResponse'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        
+  /auth/logout:
+    post:
+      tags:
+        - auth
+      description: ログアウト
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: ログアウト成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Logout"
+        401:
+          $ref: '#/components/responses/401'
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "user_id"
+        username:
+          type: string
+          example: "username"
+        email:
+          type: string
+          example: "email@example.com"
+        created_at:
+          type: string
+          format: date-time
+          example: "2023-10-01T12:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2023-10-01T12:00:00Z"
+    Token:
+      type: string
+      example: "access_token"
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    UserResponse:
+      description: ユーザー情報
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user:
+                $ref: '#/components/schemas/User'
+    TokenResponse:
+      description: アクセストークン
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              token:
+                $ref: '#/components/schemas/Token'
+    400:
+      description: "Bad Request"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: "Bad Request"
+    401:
+      description: "Unauthorized"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 401
+                  message:
+                    type: string
+                    example: "Unauthorized"
+    404:
+      description: "Not Found"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: "Not Found"
+    409:
+      description: "Conflict"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    example: 409
+                  message:
+                    type: string
+                    example: "Conflict"

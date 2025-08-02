@@ -25,9 +25,10 @@ func main() {
 	defer cdb.Close()
 
 	userPersistence := persistence.NewUserPersistence(db)
+	passwordPersistence := persistence.NewPasswordPersistence(db)
 	tokenPersistence := persistence.NewTokenPersistence(cdb)
 
-	userUseCase := usecase.NewUserUseCase(userPersistence)
+	userUseCase := usecase.NewUserUseCase(userPersistence, passwordPersistence)
 	tokenUseCase := usecase.NewTokenUseCase(tokenPersistence)
 
 	userHandler := handler.NewUserHandler(userUseCase, tokenUseCase)
@@ -41,12 +42,12 @@ func main() {
 	})
 
 	r.POST("/signup", userHandler.HandleUserSignup)
-	r.GET("/user", userHandler.HandleUserGet)
-	r.PUT("/user", userHandler.HandleUserPut)
-	r.DELETE("/user", userHandler.HandleUserDelete)
+	r.GET("/users", userHandler.HandleUserGet)
+	r.PUT("/users", userHandler.HandleUserPut)
+	r.DELETE("/users", userHandler.HandleUserDelete)
 
-	r.POST("/signin", authHandler.HandleSignin)
-	r.DELETE("/signout", authHandler.HandleSignout)
+	r.POST("/login", authHandler.HandleLogin)
+	r.DELETE("/logout", authHandler.HandleLogout)
 
 	r.Run(":8080")
 }

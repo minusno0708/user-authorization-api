@@ -5,7 +5,7 @@ import (
 )
 
 func TestConnectionDB(t *testing.T) {
-	db, err := ConnectDB()
+	db, err := ConnectDB("localhost:3306")
 	if err != nil {
 		t.Fatalf("Error connecting to the database: %v", err)
 	}
@@ -13,7 +13,7 @@ func TestConnectionDB(t *testing.T) {
 }
 
 func TestConnectionCacheDB(t *testing.T) {
-	_, err := ConnectCacheDB()
+	_, err := ConnectCacheDB("localhost:6379")
 	if err != nil {
 		t.Fatalf("Error connecting to the database: %v", err)
 	}

@@ -11,7 +11,7 @@ func TestGetUserTokenNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Failed to authenticate"
 
-	resp, err := sendRequest("GET", endpoint+"/user", nil, nil)
+	resp, err := sendRequest("GET", endpoint+"/users", nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -28,7 +28,7 @@ func TestGetUserTokenNotCorrect(t *testing.T) {
 
 	header := setToken("incorrect token").ToArray()
 
-	resp, err := sendRequest("GET", endpoint+"/user", header, nil)
+	resp, err := sendRequest("GET", endpoint+"/users", header, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,13 +43,13 @@ func TestGetUserSuccess(t *testing.T) {
 	expectedStatusCode := http.StatusOK
 	expectedMessage := "User can be acquired"
 	expectedUser := &domain.User{
-		UserID:   "testuser",
-		Username: "testname",
+		Username: testUser.Username,
+		Email:    testUser.Email,
 	}
 
 	header := setToken(accessToken).ToArray()
 
-	resp, err := sendRequest("GET", endpoint+"/user", header, nil)
+	resp, err := sendRequest("GET", endpoint+"/users", header, nil)
 	if err != nil {
 		t.Fatal(err)
 	}

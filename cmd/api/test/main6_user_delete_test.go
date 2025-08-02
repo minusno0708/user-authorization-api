@@ -11,7 +11,7 @@ func TestDeleteUserTokenNotExist(t *testing.T) {
 	expectedStatusCode := http.StatusUnauthorized
 	expectedMessage := "Failed to authenticate"
 
-	resp, err := sendRequest("DELETE", endpoint+"/user", nil, nil)
+	resp, err := sendRequest("DELETE", endpoint+"/users", nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -28,7 +28,7 @@ func TestDeleteUserTokenNotCorrect(t *testing.T) {
 
 	header := setToken("incorrect token").ToArray()
 
-	resp, err := sendRequest("DELETE", endpoint+"/user", header, nil)
+	resp, err := sendRequest("DELETE", endpoint+"/users", header, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -45,7 +45,7 @@ func TestDeleteUserSuccess(t *testing.T) {
 
 	header := setToken(accessToken).ToArray()
 
-	resp, err := sendRequest("DELETE", endpoint+"/user", header, nil)
+	resp, err := sendRequest("DELETE", endpoint+"/users", header, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -62,7 +62,7 @@ func TestDeleteUserIsUserNotExist(t *testing.T) {
 
 	header := setToken(accessToken).ToArray()
 
-	resp, err := sendRequest("DELETE", endpoint+"/user", header, nil)
+	resp, err := sendRequest("DELETE", endpoint+"/users", header, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -78,8 +78,8 @@ func TestUserCanBeDeleted(t *testing.T) {
 	expectedMessage := "User ID or password is incorrect"
 
 	requestBody := requestBody{
-		UserID:   "testuser",
-		Password: "testpass",
+		Username: testUser.Username,
+		Password: testUser.Password,
 	}
 
 	jsonString, err := json.Marshal(requestBody)
@@ -87,7 +87,7 @@ func TestUserCanBeDeleted(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := sendRequest("POST", endpoint+"/signin", nil, bytes.NewBuffer(jsonString))
+	resp, err := sendRequest("POST", endpoint+"/login", nil, bytes.NewBuffer(jsonString))
 	if err != nil {
 		t.Fatal(err)
 	}
