@@ -33,7 +33,7 @@ func NewToken(userID string) *Token {
 func (t *Token) SignedString(secretKey string) (string, error) {
 	tokenString, err := t.value.SignedString([]byte(secretKey))
 	if err != nil {
-		return "", err
+		return "", errors.ErrInternalServer
 	}
 	return tokenString, nil
 }
@@ -41,12 +41,12 @@ func (t *Token) SignedString(secretKey string) (string, error) {
 func ParseToken(tokenString, secretKey string) (*Token, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.ErrForbidden
+			return nil, errors.ErrUnauthorized
 		}
 		return []byte(secretKey), nil
 	})
 	if err != nil {
-		return nil, errors.ErrForbidden
+		return nil, errors.ErrUnauthorized
 	}
 	return &Token{value: token}, nil
 }
@@ -69,7 +69,7 @@ func (t *Token) Exp() int64 {
 
 func (t *Token) IsValid() error {
 	if time.Now().Unix() > int64(t.Exp()) {
-		return errors.ErrForbidden
+		return errors.ErrUnauthorized
 	}
 
 	return nil

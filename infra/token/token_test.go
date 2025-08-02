@@ -73,7 +73,7 @@ func Test_Token_IsValid(t *testing.T) {
 		{
 			name:        "正常系: 無効化されたトークン",
 			tokenString: InvalidTokenString,
-			expectError: errors.ErrForbidden,
+			expectError: errors.ErrUnauthorized,
 		},
 		{
 			name:        "正常系: 有効なトークン",

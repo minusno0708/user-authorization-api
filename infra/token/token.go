@@ -37,5 +37,5 @@ func (tr tokenRepository) IsValid(tokenString string) error {
 		return nil
 	}
 
-	return errors.ErrForbidden
+	return errors.ErrUnauthorized
 }
